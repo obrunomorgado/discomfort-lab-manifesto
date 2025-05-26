@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useUserProgress } from "@/hooks/useUserProgress";
+import { useCredits } from "@/hooks/useCredits";
 import { DailyAction, TestResult } from "@/types/user";
 import Header from "@/components/CareerTruthAI/Header";
 import TreatmentStatus from "@/components/CareerTruthAI/TreatmentStatus";
@@ -16,7 +17,8 @@ const CareerTruthAI = () => {
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [checkInMessage, setCheckInMessage] = useState("");
   
-  const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday } = useUserProgress();
+  const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday, spendCredits } = useUserProgress();
+  const { getTestCost } = useCredits();
   
   const pendingActions = getPendingActions();
   const completedToday = getCompletedActionsToday();
@@ -71,6 +73,21 @@ const CareerTruthAI = () => {
   const handleSubmit = async () => {
     if (!userInput.trim()) return;
     
+    const testCost = getTestCost('career-truth-ai');
+    
+    // Verificar se tem créditos suficientes
+    if (progress.credits < testCost) {
+      console.log(`Créditos insuficientes. Necessário: ${testCost}, Disponível: ${progress.credits}`);
+      return;
+    }
+    
+    // Gastar créditos antes de começar o teste
+    const success = spendCredits(testCost, 'career-truth-ai', 'Sem Desculpas IA');
+    if (!success) {
+      console.log('Falha ao gastar créditos');
+      return;
+    }
+    
     setIsAnalyzing(true);
     
     setTimeout(() => {
@@ -89,6 +106,7 @@ const CareerTruthAI = () => {
         honestyScore: Math.floor(Math.random() * 3) + 7, // 7-9
         actionItems: dailyActions.map(action => action.description),
         pointsEarned: 300,
+        creditsSpent: testCost,
         debtPointsGenerated: debtPoints,
         dailyActionsAssigned: dailyActions
       };
