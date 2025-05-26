@@ -3,7 +3,7 @@ export interface Mission {
   id: string;
   title: string;
   description: string;
-  category: 'professional' | 'mindset' | 'behavior' | 'communication' | 'physical';
+  category: 'professional' | 'mindset' | 'behavior' | 'communication' | 'physical' | 'social';
   difficulty: 'easy' | 'medium' | 'hard' | 'extreme';
   basePoints: number;
   timeEstimate: string;

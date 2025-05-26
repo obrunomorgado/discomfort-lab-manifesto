@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { UserProgress, TestResult, Badge, DailyAction, CreditTransaction } from '@/types/user';
 
@@ -114,7 +113,9 @@ const INITIAL_PROGRESS: UserProgress = {
     referralsCount: 0,
     totalEarned: 0,
     referredUsers: []
-  }
+  },
+  missionsCompleted: [],
+  discomfortChallengesCompleted: []
 };
 
 export const useUserProgress = () => {
