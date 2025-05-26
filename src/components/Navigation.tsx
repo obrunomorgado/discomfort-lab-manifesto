@@ -1,11 +1,14 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { useUserProgress } from "@/hooks/useUserProgress";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { progress } = useUserProgress();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -26,7 +29,7 @@ export const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -40,10 +43,33 @@ export const Navigation = () => {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Profile Button */}
+            <Link to="/perfil">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`text-warm-gray hover:text-warm-yellow flex items-center space-x-2 ${
+                  isActive("/perfil") ? "text-warm-yellow" : ""
+                }`}
+              >
+                <User size={18} />
+                <span className="hidden lg:inline">Nível {progress.level}</span>
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            <Link to="/perfil">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-warm-gray hover:text-warm-yellow"
+              >
+                <User size={18} />
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
@@ -73,6 +99,18 @@ export const Navigation = () => {
                   {item.name}
                 </Link>
               ))}
+              <Link
+                to="/perfil"
+                onClick={() => setIsOpen(false)}
+                className={`font-inter font-medium transition-colors duration-200 flex items-center space-x-2 ${
+                  isActive("/perfil")
+                    ? "text-warm-yellow"
+                    : "text-warm-gray hover:text-warm-yellow"
+                }`}
+              >
+                <User size={18} />
+                <span>Perfil - Nível {progress.level}</span>
+              </Link>
             </div>
           </div>
         )}
