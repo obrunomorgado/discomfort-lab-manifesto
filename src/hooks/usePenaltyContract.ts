@@ -1,14 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { PenaltyContract, PenaltyLog } from '@/types/penalty';
-
-// Mock storage usando localStorage para persistir dados entre sessões
-const STORAGE_KEYS = {
-  ACTIVE_CONTRACT: 'penalty_active_contract',
-  PENALTY_LOGS: 'penalty_logs'
-};
-
-const getMockUserId = () => 'mock-user-' + Math.random().toString(36).substring(2, 8);
+import { mockDatabase } from '@/services/mockDatabase';
 
 export const usePenaltyContract = () => {
   const [activeContract, setActiveContract] = useState<PenaltyContract | null>(null);
@@ -24,27 +17,29 @@ export const usePenaltyContract = () => {
       // Simular delay de API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockContract: PenaltyContract = {
-        id: 'contract-' + Date.now(),
-        user_id: getMockUserId(),
+      const dbContract = await mockDatabase.insertPenaltyContract({
         daily_task: contractData.daily_task,
         penalty_amount: contractData.penalty_amount,
         currency: contractData.currency,
         destination_type: contractData.destination_type,
         destination_details: contractData.destination_details,
         stripe_setup_intent_id: 'si_mock_' + Date.now(),
-        is_active: false, // Será ativado após confirmar método de pagamento
-        created_at: new Date(),
+        is_active: false,
         consecutive_failures: 0
+      });
+
+      // Converter para formato do frontend
+      const frontendContract: PenaltyContract = {
+        ...dbContract,
+        created_at: new Date(dbContract.created_at),
+        last_check_date: dbContract.last_check_date ? new Date(dbContract.last_check_date) : undefined
       };
 
-      // Salvar no localStorage
-      localStorage.setItem(STORAGE_KEYS.ACTIVE_CONTRACT, JSON.stringify(mockContract));
-      setActiveContract(mockContract);
+      setActiveContract(frontendContract);
       
       return { 
         success: true, 
-        data: mockContract, 
+        data: frontendContract, 
         client_secret: 'seti_mock_client_secret_' + Date.now()
       };
     } catch (error) {
@@ -62,15 +57,18 @@ export const usePenaltyContract = () => {
       // Simular delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (activeContract) {
-        const updatedContract = {
-          ...activeContract,
-          stripe_payment_method_id: paymentMethodId,
-          is_active: true
+      const updatedContract = await mockDatabase.updatePenaltyContract(contractId, {
+        stripe_payment_method_id: paymentMethodId,
+        is_active: true
+      });
+      
+      if (updatedContract) {
+        const frontendContract: PenaltyContract = {
+          ...updatedContract,
+          created_at: new Date(updatedContract.created_at),
+          last_check_date: updatedContract.last_check_date ? new Date(updatedContract.last_check_date) : undefined
         };
-        
-        localStorage.setItem(STORAGE_KEYS.ACTIVE_CONTRACT, JSON.stringify(updatedContract));
-        setActiveContract(updatedContract);
+        setActiveContract(frontendContract);
       }
       
       return { success: true };
@@ -87,14 +85,17 @@ export const usePenaltyContract = () => {
       // Simular delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      if (activeContract) {
-        const updatedContract = {
-          ...activeContract,
-          is_active: false
+      const updatedContract = await mockDatabase.updatePenaltyContract(contractId, {
+        is_active: false
+      });
+      
+      if (updatedContract) {
+        const frontendContract: PenaltyContract = {
+          ...updatedContract,
+          created_at: new Date(updatedContract.created_at),
+          last_check_date: updatedContract.last_check_date ? new Date(updatedContract.last_check_date) : undefined
         };
-        
-        localStorage.setItem(STORAGE_KEYS.ACTIVE_CONTRACT, JSON.stringify(updatedContract));
-        setActiveContract(updatedContract);
+        setActiveContract(frontendContract);
       }
       
       return { success: true };
@@ -108,12 +109,14 @@ export const usePenaltyContract = () => {
     try {
       console.log('Loading active contract...');
       
-      const stored = localStorage.getItem(STORAGE_KEYS.ACTIVE_CONTRACT);
-      if (stored) {
-        const contract = JSON.parse(stored);
-        // Converter string de data de volta para Date
-        contract.created_at = new Date(contract.created_at);
-        setActiveContract(contract);
+      const dbContract = await mockDatabase.getActivePenaltyContract();
+      if (dbContract) {
+        const frontendContract: PenaltyContract = {
+          ...dbContract,
+          created_at: new Date(dbContract.created_at),
+          last_check_date: dbContract.last_check_date ? new Date(dbContract.last_check_date) : undefined
+        };
+        setActiveContract(frontendContract);
       } else {
         setActiveContract(null);
       }
@@ -127,46 +130,14 @@ export const usePenaltyContract = () => {
     try {
       console.log('Loading penalty logs...');
       
-      const stored = localStorage.getItem(STORAGE_KEYS.PENALTY_LOGS);
-      if (stored) {
-        const logs = JSON.parse(stored);
-        // Converter strings de data de volta para Date
-        logs.forEach((log: any) => {
-          log.charged_at = new Date(log.charged_at);
-          if (log.confirmed_at) log.confirmed_at = new Date(log.confirmed_at);
-        });
-        setPenaltyLogs(logs);
-      } else {
-        // Criar alguns logs mock para demonstração
-        const mockLogs: PenaltyLog[] = [
-          {
-            id: 'log-1',
-            contract_id: 'contract-1',
-            user_id: getMockUserId(),
-            amount_charged: 1000, // R$ 10.00
-            currency: 'BRL',
-            destination_type: 'fund',
-            status: 'completed',
-            reason: 'Faltou ao exercício diário',
-            charged_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 dias atrás
-            confirmed_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'log-2',
-            contract_id: 'contract-1', 
-            user_id: getMockUserId(),
-            amount_charged: 1000, // R$ 10.00
-            currency: 'BRL',
-            destination_type: 'ngo',
-            status: 'pending',
-            reason: 'Não leu as páginas obrigatórias',
-            charged_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) // 1 dia atrás
-          }
-        ];
-        
-        localStorage.setItem(STORAGE_KEYS.PENALTY_LOGS, JSON.stringify(mockLogs));
-        setPenaltyLogs(mockLogs);
-      }
+      const dbLogs = await mockDatabase.getPenaltyLogsByUser('current-user');
+      const frontendLogs: PenaltyLog[] = dbLogs.map(log => ({
+        ...log,
+        charged_at: new Date(log.charged_at),
+        confirmed_at: log.confirmed_at ? new Date(log.confirmed_at) : undefined
+      }));
+      
+      setPenaltyLogs(frontendLogs);
     } catch (error) {
       console.error('Erro ao carregar logs de penalidade:', error);
       setPenaltyLogs([]);
@@ -177,29 +148,42 @@ export const usePenaltyContract = () => {
   const simulatePenalty = async (reason: string, amount: number) => {
     if (!activeContract || !activeContract.is_active) return;
     
-    const newLog: PenaltyLog = {
-      id: 'log-' + Date.now(),
-      contract_id: activeContract.id,
-      user_id: activeContract.user_id,
-      amount_charged: amount,
-      currency: 'BRL',
-      destination_type: activeContract.destination_type,
-      status: 'completed',
-      reason,
-      charged_at: new Date()
-    };
-    
-    const updatedLogs = [newLog, ...penaltyLogs];
-    setPenaltyLogs(updatedLogs);
-    localStorage.setItem(STORAGE_KEYS.PENALTY_LOGS, JSON.stringify(updatedLogs));
-    
-    // Incrementar falhas consecutivas
-    const updatedContract = {
-      ...activeContract,
-      consecutive_failures: activeContract.consecutive_failures + 1
-    };
-    setActiveContract(updatedContract);
-    localStorage.setItem(STORAGE_KEYS.ACTIVE_CONTRACT, JSON.stringify(updatedContract));
+    try {
+      const newLog = await mockDatabase.insertPenaltyLog({
+        contract_id: activeContract.id,
+        user_id: activeContract.user_id,
+        amount_charged: amount,
+        currency: 'BRL',
+        destination_type: activeContract.destination_type,
+        status: 'completed',
+        reason
+      });
+
+      // Converter para frontend format
+      const frontendLog: PenaltyLog = {
+        ...newLog,
+        charged_at: new Date(newLog.charged_at),
+        confirmed_at: newLog.confirmed_at ? new Date(newLog.confirmed_at) : undefined
+      };
+
+      setPenaltyLogs(prev => [frontendLog, ...prev]);
+      
+      // Incrementar falhas consecutivas
+      const updatedContract = await mockDatabase.updatePenaltyContract(activeContract.id, {
+        consecutive_failures: activeContract.consecutive_failures + 1
+      });
+      
+      if (updatedContract) {
+        const frontendContract: PenaltyContract = {
+          ...updatedContract,
+          created_at: new Date(updatedContract.created_at),
+          last_check_date: updatedContract.last_check_date ? new Date(updatedContract.last_check_date) : undefined
+        };
+        setActiveContract(frontendContract);
+      }
+    } catch (error) {
+      console.error('Erro ao simular penalidade:', error);
+    }
   };
 
   useEffect(() => {
