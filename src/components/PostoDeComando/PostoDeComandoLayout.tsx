@@ -11,6 +11,8 @@ import MissionSelector from '@/components/PostoDeComando/MissionSelector';
 import CombatStatus from '@/components/PostoDeComando/CombatStatus';
 import IntelSection from '@/components/PostoDeComando/IntelSection';
 import SquadManagement from '@/components/Squad/SquadManagement';
+import SquadNotifications from '@/components/Squad/SquadNotifications';
+import HonorLog from '@/components/Squad/HonorLog';
 import QuickActions from '@/components/PostoDeComando/QuickActions';
 import RecruitData from '@/components/PostoDeComando/RecruitData';
 import PotLink from '@/components/Squad/PotLink';
@@ -83,7 +85,11 @@ const PostoDeComandoLayout = ({
             />
 
             <IntelSection progress={progress} stats={stats} />
-            <SquadManagement />
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <SquadManagement />
+              {userSquad && <SquadNotifications />}
+            </div>
 
             <QuickActions
               progress={progress}
@@ -99,6 +105,7 @@ const PostoDeComandoLayout = ({
           <div className="space-y-6">
             <RecruitData progress={progress} />
             <PotLink />
+            {userSquad && <HonorLog />}
             <OperationHistory progress={progress} />
             <OperationSchedule progress={progress} pendingActions={pendingActions} />
           </div>

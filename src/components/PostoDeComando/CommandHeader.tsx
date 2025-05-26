@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Shield } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useSquad } from '@/hooks/useSquad';
+import { Shield, Users, Bell } from 'lucide-react';
 import { UserProgress } from '@/types/user';
 
 interface CommandHeaderProps {
@@ -9,43 +11,48 @@ interface CommandHeaderProps {
 }
 
 const CommandHeader = ({ progress, pendingActionsCount }: CommandHeaderProps) => {
-  const getStatusColor = () => {
-    if (progress.isInTreatment) return 'text-cyber-warning';
-    if (pendingActionsCount > 0) return 'text-cyber-fuchsia';
-    return 'text-cyber-neon';
-  };
-
-  const getStatusText = () => {
-    if (progress.isInTreatment) return 'FERIDO EM COMBATE';
-    if (pendingActionsCount > 0) return 'MISSÕES PENDENTES';
-    return 'PRONTO PARA COMBATE';
-  };
+  const { getSquadByUserId, unreadNotifications } = useSquad();
+  const userSquad = getSquadByUserId('current-user');
 
   return (
-    <div className="bg-military-card rounded-lg border-2 border-cyber-fuchsia/30 shadow-2xl mb-8 cyber-glow rivet-border">
-      <div className="bg-gradient-to-r from-cyber-fuchsia/20 to-cyber-cyan/20 text-warm-gray p-6 rounded-t-lg metal-brushed">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="bg-military-bg text-cyber-fuchsia rounded-full p-3 border border-cyber-fuchsia">
-              <Shield size={24} />
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1 className="text-4xl font-bebas text-cyber-fuchsia cyber-glow">
+            POSTO DE COMANDO
+          </h1>
+          <p className="text-warm-gray/70 font-consolas">
+            Central de Operações • Recruta {progress.username || 'Sem Nome'}
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          {userSquad && (
+            <div className="flex items-center space-x-2">
+              <Shield size={20} className="text-cyber-cyan" />
+              <div className="text-right">
+                <div className="font-bebas text-cyber-cyan">{userSquad.name}</div>
+                <div className="text-xs text-warm-gray/70 font-consolas">
+                  {userSquad.members.length}/3 membros • XP +{Math.round((userSquad.xpMultiplier - 1) * 100)}%
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bebas tracking-wider text-cyber-cyan">
-                DOSSIÊ DO RECRUTA - ID#{Math.random().toString(36).substring(2, 8).toUpperCase()}
-              </h1>
-              <p className="text-warm-gray/80 font-consolas">
-                Data de Alistamento: {new Date().toLocaleDateString('pt-BR')}
-              </p>
+          )}
+          
+          {unreadNotifications > 0 && (
+            <div className="flex items-center space-x-2">
+              <Bell size={20} className="text-cyber-warning animate-pulse" />
+              <Badge className="bg-cyber-warning/20 border-cyber-warning/50 text-cyber-warning">
+                {unreadNotifications}
+              </Badge>
             </div>
-          </div>
-          <div className="text-right">
-            <div className={`text-xl font-bebas ${getStatusColor()}`}>
-              {getStatusText()}
-            </div>
-            <div className="text-sm text-warm-gray/80 font-consolas">
-              Rank Operacional: {progress.level}
-            </div>
-          </div>
+          )}
+          
+          {pendingActionsCount > 0 && (
+            <Badge className="bg-cyber-fuchsia/20 border-cyber-fuchsia/50 text-cyber-fuchsia animate-pulse">
+              {pendingActionsCount} ações pendentes
+            </Badge>
+          )}
         </div>
       </div>
     </div>

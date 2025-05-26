@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const useMissionHandlers = () => {
   const { progress, saveProgress, applyMissionResult } = useUserProgress();
-  const { getSquadByUserId, reportMissionSuccess, reportMissionStart } = useSquad();
+  const { getSquadByUserId, reportMissionSuccess, reportMissionStart, applySquadPenalty } = useSquad();
   const { playSound } = useSoundEffects();
   const { toast } = useToast();
 
@@ -38,7 +38,12 @@ export const useMissionHandlers = () => {
     
     if (success) {
       const basePoints = mission.selectedMission.basePoints;
-      const earnedPoints = mission.isDoubled ? basePoints * 2 : basePoints;
+      let earnedPoints = mission.isDoubled ? basePoints * 2 : basePoints;
+      
+      // Apply squad XP multiplier if in a squad
+      if (userSquad) {
+        earnedPoints = Math.floor(earnedPoints * userSquad.xpMultiplier);
+      }
       
       const finalPoints = progress.currentBettingEffect?.envelope.effect === 'bonus_points' 
         ? Math.floor(earnedPoints * progress.currentBettingEffect.envelope.value)
@@ -54,6 +59,11 @@ export const useMissionHandlers = () => {
 
       if (userSquad) {
         reportMissionSuccess(userSquad.id, progress.username || 'Recruta', mission.selectedMission.title);
+        
+        toast({
+          title: "🎯 MISSÃO COMPLETA!",
+          description: `+${Math.round((userSquad.xpMultiplier - 1) * 100)}% XP bônus do squad aplicado!`,
+        });
       }
     } else {
       const basePenalty = 5;
@@ -79,6 +89,17 @@ export const useMissionHandlers = () => {
         timestamp: new Date()
       };
       newProgress.creditTransactions.push(transaction);
+
+      // Apply squad penalty if in a squad
+      if (userSquad) {
+        applySquadPenalty(userSquad.id, 'current-user', progress.username || 'Recruta');
+        
+        toast({
+          title: "💥 FALHA CRÍTICA!",
+          description: "Squad perdeu 20% do XP. Todos os membros foram penalizados.",
+          variant: "destructive"
+        });
+      }
     }
 
     newProgress.missionsCompleted.push(mission);

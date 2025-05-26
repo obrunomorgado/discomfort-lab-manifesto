@@ -7,6 +7,8 @@ type SoundType =
   | 'squad_notification' 
   | 'squad_member_joined' 
   | 'squad_member_left'
+  | 'squad_penalty'
+  | 'squad_bonus'
   | 'xp_gained'
   | 'penalty_applied'
   | 'button_click'
@@ -41,6 +43,15 @@ const SOUND_CONFIGS: Record<SoundType, SoundConfig[]> = {
   squad_member_left: [
     { frequency: 523, duration: 200, type: 'sine', volume: 0.3 },
     { frequency: 392, duration: 300, type: 'sine', volume: 0.3 }
+  ],
+  squad_penalty: [
+    { frequency: 150, duration: 400, type: 'sawtooth', volume: 0.4 },
+    { frequency: 130, duration: 400, type: 'sawtooth', volume: 0.4 }
+  ],
+  squad_bonus: [
+    { frequency: 659, duration: 150, type: 'sine', volume: 0.3 },
+    { frequency: 784, duration: 150, type: 'sine', volume: 0.3 },
+    { frequency: 880, duration: 200, type: 'sine', volume: 0.3 }
   ],
   xp_gained: [
     { frequency: 880, duration: 150, type: 'sine', volume: 0.2 }
