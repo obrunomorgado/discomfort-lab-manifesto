@@ -14,7 +14,7 @@ export const Navigation = () => {
   const { progress, addCredits } = useUserProgress();
 
   const navItems = [
-    { name: "Sala do Paciente", path: "/sala-do-paciente" },
+    { name: "Posto de Comando", path: "/posto-de-comando" },
     { name: "Desconfortos", path: "/testes" },
     { name: "Sem Desculpas IA", path: "/career-truth-ai" },
     { name: "Arquiteto da Verdade", path: "/arquiteto-da-verdade" },
@@ -32,7 +32,7 @@ export const Navigation = () => {
       <nav className="relative z-50 border-b border-dark-border bg-dark-bg/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/sala-do-paciente" className="text-2xl font-bebas text-warm-yellow tracking-wider">
+            <Link to="/posto-de-comando" className="text-2xl font-bebas text-warm-yellow tracking-wider">
               SALA DO DESCONFORTO
             </Link>
 
