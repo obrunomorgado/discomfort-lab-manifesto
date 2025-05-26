@@ -1,5 +1,5 @@
-
 import { useUserProgress } from '@/hooks/useUserProgress';
+import { usePenaltyContract } from '@/hooks/usePenaltyContract';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,12 +15,21 @@ import {
   User,
   Zap,
   FileText,
-  Coins
+  Coins,
+  DollarSign
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import PenaltyStatusChip from '@/components/SkinInTheGame/PenaltyStatusChip';
+import PenaltySetupModal from '@/components/SkinInTheGame/PenaltySetupModal';
+import PenaltyManagement from '@/components/SkinInTheGame/PenaltyManagement';
 
 const SalaDosPaciente = () => {
   const { progress, getStats, getPendingActions } = useUserProgress();
+  const { activeContract } = usePenaltyContract();
+  const [showPenaltySetup, setShowPenaltySetup] = useState(false);
+  const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
+  
   const stats = getStats();
   const pendingActions = getPendingActions();
 
@@ -106,6 +115,14 @@ const SalaDosPaciente = () => {
                 <div className={`text-xs ${progress.debtPoints > 0 ? 'text-red-400' : 'text-gray-400'}`}>DÍVIDA</div>
               </div>
             </div>
+          </div>
+
+          {/* Penalty Status Chip */}
+          <div className="p-6 border-b border-dark-border">
+            <PenaltyStatusChip 
+              contract={activeContract}
+              onManage={() => setShowPenaltyManagement(true)}
+            />
           </div>
         </div>
 
@@ -216,13 +233,21 @@ const SalaDosPaciente = () => {
                       REALIZAR TESTE
                     </Button>
                   </Link>
-                  {pendingActions.length > 0 ? (
-                    <Button variant="outline" className="w-full font-bebas border-red-500/50 text-red-400 hover:bg-red-900/30 hover-lift">
-                      COMPLETAR AÇÕES ({pendingActions.length})
+                  {!activeContract || !activeContract.is_active ? (
+                    <Button 
+                      onClick={() => setShowPenaltySetup(true)}
+                      className="w-full bg-red-600 text-white hover:bg-red-700 font-bebas hover-lift flex items-center space-x-2"
+                    >
+                      <DollarSign size={16} />
+                      <span>ATIVAR PENALIDADE</span>
                     </Button>
                   ) : (
-                    <Button variant="outline" className="w-full font-bebas border-dark-border text-warm-gray hover:bg-dark-bg/50 hover-lift">
-                      CHECK-IN DIÁRIO
+                    <Button 
+                      onClick={() => setShowPenaltyManagement(true)}
+                      variant="outline" 
+                      className="w-full font-bebas border-red-500/50 text-red-400 hover:bg-red-900/30 hover-lift"
+                    >
+                      GERENCIAR COMPROMISSO
                     </Button>
                   )}
                 </div>
@@ -320,6 +345,34 @@ const SalaDosPaciente = () => {
             </Card>
           </div>
         </div>
+
+        {/* Modals */}
+        <PenaltySetupModal 
+          isOpen={showPenaltySetup}
+          onClose={() => setShowPenaltySetup(false)}
+        />
+
+        {/* Penalty Management Modal */}
+        {showPenaltyManagement && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-dark-card border border-warm-yellow/30 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bebas text-warm-yellow">GERENCIAR PENALIDADES</h2>
+                  <Button 
+                    onClick={() => setShowPenaltyManagement(false)}
+                    variant="outline"
+                    size="sm"
+                    className="border-dark-border text-warm-gray"
+                  >
+                    FECHAR
+                  </Button>
+                </div>
+                <PenaltyManagement />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
