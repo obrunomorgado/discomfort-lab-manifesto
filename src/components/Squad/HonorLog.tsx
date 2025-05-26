@@ -9,13 +9,23 @@ import { Trophy, Target, Zap, Crown } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+interface Achievement {
+  id: string;
+  type: string;
+  title: string;
+  points: number;
+  timestamp: Date;
+  isDoubled?: boolean;
+  description?: string;
+}
+
 const HonorLog = () => {
   const { progress } = useUserProgress();
   const { getSquadByUserId } = useSquad();
   
   const userSquad = getSquadByUserId('current-user');
   
-  const achievements = [
+  const achievements: Achievement[] = [
     ...progress.missionsCompleted
       .filter(mission => mission.completed)
       .slice(-5)
@@ -130,28 +140,6 @@ const HonorLog = () => {
       </CardContent>
     </Card>
   );
-
-  function getAchievementIcon(type: string) {
-    switch (type) {
-      case 'mission':
-        return <Target size={16} className="text-cyber-cyan" />;
-      case 'badge':
-        return <Trophy size={16} className="text-cyber-warning" />;
-      default:
-        return <Zap size={16} className="text-cyber-fuchsia" />;
-    }
-  }
-
-  function getAchievementColor(type: string) {
-    switch (type) {
-      case 'mission':
-        return 'border-cyber-cyan/30 bg-cyber-cyan/10';
-      case 'badge':
-        return 'border-cyber-warning/30 bg-cyber-warning/10';
-      default:
-        return 'border-cyber-fuchsia/30 bg-cyber-fuchsia/10';
-    }
-  }
 };
 
 export default HonorLog;
