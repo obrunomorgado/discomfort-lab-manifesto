@@ -6,14 +6,20 @@ import { useSquad } from '@/hooks/useSquad';
 import { useSquadIntegration } from '@/hooks/useSquadIntegration';
 import { useMissionHandlers } from '@/hooks/useMissionHandlers';
 import { useModalStates } from '@/hooks/useModalStates';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { useAudioEffects } from '@/hooks/useAudioEffects';
 import PostoDeComandoLayout from '@/components/PostoDeComando/PostoDeComandoLayout';
 import PostoDeComandoModals from '@/components/PostoDeComando/PostoDeComandoModals';
+import MilitaryOnboarding from '@/components/Onboarding/MilitaryOnboarding';
 
 const PostoDeComando = () => {
   const { progress, getStats, getPendingActions } = useUserProgress();
   const { activeContract } = usePenaltyContract();
   const { getSquadByUserId } = useSquad();
   const { userSquad, handleMissionStart, handleMissionSuccess, handleMissionFailure } = useSquadIntegration();
+  const { preloadSounds } = useAudioEffects();
+  const { showOnboarding, completeOnboarding } = useOnboarding();
+  
   const {
     handleMissionSelect,
     handleMissionReport,
@@ -41,6 +47,10 @@ const PostoDeComando = () => {
   const stats = getStats();
   const pendingActions = getPendingActions();
 
+  React.useEffect(() => {
+    preloadSounds();
+  }, [preloadSounds]);
+
   const handleMissionSelectWithSquad = (mission: any, isDoubled: boolean) => {
     handleMissionSelect(mission, isDoubled);
     handleMissionStart(mission);
@@ -60,6 +70,10 @@ const PostoDeComando = () => {
     }
     
     return result;
+  };
+
+  const handleOnboardingComplete = () => {
+    completeOnboarding();
   };
 
   return (
@@ -95,6 +109,11 @@ const PostoDeComando = () => {
         onMissionReport={handleMissionReportWithSquad}
         onDiscomfortAccept={handleDiscomfortAccept}
         onBettingSelect={handleBettingSelect}
+      />
+
+      <MilitaryOnboarding
+        isOpen={showOnboarding}
+        onComplete={handleOnboardingComplete}
       />
     </>
   );

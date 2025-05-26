@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useUserProgress } from '@/hooks/useUserProgress';
-import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { useAudioEffects } from '@/hooks/useAudioEffects';
 import { useToast } from '@/hooks/use-toast';
 import { Timer, DollarSign, Skull, Target, AlertTriangle, Crown } from 'lucide-react';
 
@@ -20,7 +20,7 @@ interface Challenge72hState {
 
 const Desafio72h = () => {
   const { progress } = useUserProgress();
-  const { playSound } = useSoundEffects();
+  const { playSound } = useAudioEffects();
   const { toast } = useToast();
   
   const [challenge, setChallenge] = useState<Challenge72hState>({
@@ -105,7 +105,7 @@ const Desafio72h = () => {
         status: 'failed'
       }));
       
-      playSound('mission_failure');
+      playSound('flatline');
       toast({
         title: "💀 DESAFIO FALHADO!",
         description: "Você perdeu todo o dinheiro virtual! Tente novamente em 24h.",
