@@ -53,14 +53,39 @@ export interface TestResult {
   honestyScore: number;
   actionItems: string[];
   pointsEarned: number;
-  creditsSpent: number; // Nova propriedade
+  creditsSpent: number;
   debtPointsGenerated?: number;
   dailyActionsAssigned?: DailyAction[];
 }
 
+// Novas interfaces para o sistema de missões
+export interface DailyMissionSelection {
+  selectedMission: any;
+  isDoubled: boolean;
+  selectedAt: Date;
+  completed?: boolean;
+  completedAt?: Date;
+  pointsEarned?: number;
+  penaltyApplied?: number;
+}
+
+export interface DiscomfortChallenge {
+  card: any;
+  acceptedAt: Date;
+  completed?: boolean;
+  completedAt?: Date;
+  pointsEarned?: number;
+}
+
+export interface BettingEffect {
+  envelope: any;
+  selectedAt: Date;
+  isActive: boolean;
+}
+
 export interface UserProgress {
   totalPoints: number;
-  credits: number; // Nova propriedade
+  credits: number;
   debtPoints: number;
   level: number;
   badges: Badge[];
@@ -73,14 +98,21 @@ export interface UserProgress {
   isInTreatment: boolean;
   dailyActions: DailyAction[];
   treatmentStartDate?: Date;
-  creditTransactions: CreditTransaction[]; // Nova propriedade
-  referralSystem: ReferralSystem; // Nova propriedade
+  creditTransactions: CreditTransaction[];
+  referralSystem: ReferralSystem;
+  
+  // Novas propriedades para o sistema de missões
+  currentMission?: DailyMissionSelection;
+  currentDiscomfortChallenge?: DiscomfortChallenge;
+  currentBettingEffect?: BettingEffect;
+  missionsCompleted: DailyMissionSelection[];
+  discomfortChallengesCompleted: DiscomfortChallenge[];
 }
 
 export interface UserStats {
   testsCompleted: number;
   totalPoints: number;
-  credits: number; // Nova propriedade
+  credits: number;
   debtPoints: number;
   badgesEarned: number;
   currentStreak: number;

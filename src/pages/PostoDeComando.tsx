@@ -27,12 +27,20 @@ import PenaltyStatusChip from '@/components/SkinInTheGame/PenaltyStatusChip';
 import PenaltySetupModal from '@/components/SkinInTheGame/PenaltySetupModal';
 import PenaltyManagement from '@/components/SkinInTheGame/PenaltyManagement';
 import CombatMedic from '@/components/CombatMedic/CombatMedic';
+import MissionSelector from '@/components/PostoDeComando/MissionSelector';
+import DailyReportModal from '@/components/PostoDeComando/DailyReportModal';
+import DiscomfortCard from '@/components/PostoDeComando/DiscomfortCard';
+import BettingMachine from '@/components/PostoDeComando/BettingMachine';
 
 const PostoDeComando = () => {
-  const { progress, getStats, getPendingActions } = useUserProgress();
+  const { progress, getStats, getPendingActions, addCredits, saveProgress } = useUserProgress();
   const { activeContract } = usePenaltyContract();
   const [showPenaltySetup, setShowPenaltySetup] = useState(false);
   const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
+  const [showMissionSelector, setShowMissionSelector] = useState(false);
+  const [showDailyReport, setShowDailyReport] = useState(false);
+  const [showDiscomfortCard, setShowDiscomfortCard] = useState(false);
+  const [showBettingMachine, setShowBettingMachine] = useState(false);
   
   const stats = getStats();
   const pendingActions = getPendingActions();
@@ -58,7 +66,95 @@ const PostoDeComando = () => {
     percentage: ((progress.totalPoints - ((progress.level - 1) * 1000)) / 1000) * 100
   };
 
+  const handleMissionSelect = (mission: any, isDoubled: boolean) => {
+    const newProgress = { ...progress };
+    newProgress.currentMission = {
+      selectedMission: mission,
+      isDoubled,
+      selectedAt: new Date()
+    };
+    newProgress.lastActivity = new Date();
+    saveProgress(newProgress);
+    setShowMissionSelector(false);
+  };
+
+  const handleMissionReport = (success: boolean) => {
+    if (!progress.currentMission) return;
+
+    const newProgress = { ...progress };
+    const mission = progress.currentMission;
+    
+    if (success) {
+      const basePoints = mission.selectedMission.basePoints;
+      const earnedPoints = mission.isDoubled ? basePoints * 2 : basePoints;
+      
+      // Aplicar efeito de aposta se ativo
+      const finalPoints = progress.currentBettingEffect?.envelope.effect === 'bonus_points' 
+        ? Math.floor(earnedPoints * progress.currentBettingEffect.envelope.value)
+        : earnedPoints;
+      
+      newProgress.totalPoints += finalPoints;
+      mission.pointsEarned = finalPoints;
+      mission.completed = true;
+      mission.completedAt = new Date();
+    } else {
+      const basePenalty = 5;
+      let penalty = mission.isDoubled ? basePenalty * 2 : basePenalty;
+      
+      // Aplicar efeito de aposta se ativo
+      if (progress.currentBettingEffect?.envelope.effect === 'penalty_increase') {
+        penalty *= progress.currentBettingEffect.envelope.value;
+      }
+      
+      newProgress.credits = Math.max(0, newProgress.credits - penalty);
+      mission.penaltyApplied = penalty;
+      mission.completed = false;
+      mission.completedAt = new Date();
+      
+      // Adicionar transação de penalidade
+      const transaction = {
+        id: `mission-penalty-${Date.now()}`,
+        type: 'penalty' as const,
+        amount: -penalty,
+        description: `Falha na missão: ${mission.selectedMission.title}`,
+        timestamp: new Date()
+      };
+      newProgress.creditTransactions.push(transaction);
+    }
+
+    // Mover missão para histórico
+    newProgress.missionsCompleted.push(mission);
+    newProgress.currentMission = undefined;
+    newProgress.lastActivity = new Date();
+    
+    saveProgress(newProgress);
+  };
+
+  const handleDiscomfortAccept = (card: any) => {
+    const newProgress = { ...progress };
+    newProgress.currentDiscomfortChallenge = {
+      card,
+      acceptedAt: new Date()
+    };
+    saveProgress(newProgress);
+    setShowDiscomfortCard(false);
+  };
+
+  const handleBettingSelect = (envelope: any) => {
+    const newProgress = { ...progress };
+    newProgress.currentBettingEffect = {
+      envelope,
+      selectedAt: new Date(),
+      isActive: true
+    };
+    saveProgress(newProgress);
+    setShowBettingMachine(false);
+  };
+
   const getDrNicotineMessage = () => {
+    if (progress.currentMission && !progress.currentMission.completed) {
+      return `Missão ativa: ${progress.currentMission.selectedMission.title}. Execute ou sangre créditos.`;
+    }
     if (progress.isInTreatment) {
       return "🩸 Hemorragia de disciplina detectada. Suturar imediatamente ou sangrar créditos.";
     }
@@ -70,7 +166,7 @@ const PostoDeComando = () => {
 
   const getDrNicotineMode = () => {
     if (progress.isInTreatment) return 'alert';
-    if (pendingActions.length > 0) return 'neutral';
+    if (progress.currentMission || pendingActions.length > 0) return 'neutral';
     return 'praise';
   };
 
@@ -157,6 +253,52 @@ const PostoDeComando = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Combat Status */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Mission Selector */}
+            {!progress.currentMission && (
+              <MissionSelector 
+                onMissionSelect={handleMissionSelect}
+                selectedMission={progress.currentMission?.selectedMission}
+                isDoubled={progress.currentMission?.isDoubled}
+              />
+            )}
+
+            {/* Current Mission Status */}
+            {progress.currentMission && !progress.currentMission.completed && (
+              <Card className="border-cyber-cyan/50 bg-gradient-to-br from-cyber-cyan/20 to-military-navy/20 cyber-glow rivet-border">
+                <CardHeader className="bg-gradient-to-r from-cyber-cyan/30 to-military-navy/30 text-white rounded-t-lg">
+                  <CardTitle className="flex items-center space-x-2 font-bebas">
+                    <Target size={20} />
+                    <span>MISSÃO ATIVA</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-bebas text-xl text-cyber-cyan mb-2">
+                        {progress.currentMission.selectedMission.title}
+                      </h3>
+                      <p className="text-warm-gray font-consolas">
+                        {progress.currentMission.selectedMission.description}
+                      </p>
+                    </div>
+                    
+                    {progress.currentMission.isDoubled && (
+                      <Badge className="bg-cyber-warning/20 border-cyber-warning/50 text-cyber-warning animate-pulse-warning">
+                        RISCO DOBRADO ATIVO
+                      </Badge>
+                    )}
+
+                    <Button 
+                      onClick={() => setShowDailyReport(true)}
+                      className="w-full bg-cyber-cyan text-military-bg hover:bg-cyber-cyan/90 font-bebas"
+                    >
+                      REPORTAR MISSÃO
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Emergency Combat Alerts */}
             {(progress.isInTreatment || pendingActions.length > 0) && (
               <Card className="border-cyber-warning/50 bg-gradient-to-br from-cyber-warning/20 to-red-800/20 warning-glow animate-pulse-warning rivet-border">
@@ -256,11 +398,29 @@ const PostoDeComando = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <Link to="/testes">
-                    <Button className="w-full bg-cyber-fuchsia text-military-bg hover:bg-cyber-fuchsia/90 font-bebas hover-lift hover-glitch">
+                  {!progress.currentMission ? (
+                    <Button 
+                      onClick={() => setShowMissionSelector(true)}
+                      className="w-full bg-cyber-fuchsia text-military-bg hover:bg-cyber-fuchsia/90 font-bebas hover-lift hover-glitch"
+                    >
                       SELECIONAR MISSÃO
                     </Button>
-                  </Link>
+                  ) : (
+                    <Button 
+                      onClick={() => setShowDailyReport(true)}
+                      className="w-full bg-cyber-cyan text-military-bg hover:bg-cyber-cyan/90 font-bebas hover-lift hover-glitch"
+                    >
+                      REPORTAR MISSÃO
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    onClick={() => setShowBettingMachine(true)}
+                    className="w-full bg-cyber-warning text-military-bg hover:bg-cyber-warning/90 font-bebas hover-lift hover-glitch"
+                  >
+                    MÁQUINA DE APOSTAS
+                  </Button>
+                  
                   {!activeContract || !activeContract.is_active ? (
                     <Button 
                       onClick={() => setShowPenaltySetup(true)}
@@ -278,6 +438,12 @@ const PostoDeComando = () => {
                       GERENCIAR COMPROMISSO
                     </Button>
                   )}
+                  
+                  <Link to="/testes">
+                    <Button className="w-full bg-cyber-neon text-military-bg hover:bg-cyber-neon/90 font-bebas hover-lift hover-glitch">
+                      TESTES AVANÇADOS
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -378,6 +544,24 @@ const PostoDeComando = () => {
         <PenaltySetupModal 
           isOpen={showPenaltySetup}
           onClose={() => setShowPenaltySetup(false)}
+        />
+
+        <DailyReportModal 
+          isOpen={showDailyReport}
+          onClose={() => setShowDailyReport(false)}
+          mission={progress.currentMission}
+          onReport={handleMissionReport}
+        />
+
+        <DiscomfortCard 
+          onAccept={handleDiscomfortAccept}
+          onDismiss={() => setShowDiscomfortCard(false)}
+        />
+
+        <BettingMachine 
+          isOpen={showBettingMachine}
+          onClose={() => setShowBettingMachine(false)}
+          onEnvelopeSelect={handleBettingSelect}
         />
 
         {/* Penalty Management Modal */}
