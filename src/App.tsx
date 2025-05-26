@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import Index from "./pages/Index";
 import TestPanel from "./pages/TestPanel";
-import SalaDosPaciente from "./pages/SalaDosPaciente";
+import PostoDeComando from "./pages/PostoDeComando";
 import CareerTruthAI from "./pages/CareerTruthAI";
 import UnbreakableMind from "./pages/UnbreakableMind";
 import ArquitetoDaVerdade from "./pages/ArquitetoDaVerdade";
@@ -22,11 +22,12 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="min-h-screen bg-dark-bg">
+        <div className="min-h-screen bg-military-bg">
           <Navigation />
           <Routes>
-            <Route path="/" element={<SalaDosPaciente />} />
-            <Route path="/sala-do-paciente" element={<SalaDosPaciente />} />
+            <Route path="/" element={<PostoDeComando />} />
+            <Route path="/posto-de-comando" element={<PostoDeComando />} />
+            <Route path="/sala-do-paciente" element={<PostoDeComando />} />
             <Route path="/testes" element={<TestPanel />} />
             <Route path="/career-truth-ai" element={<CareerTruthAI />} />
             <Route path="/unbreakable-mind" element={<UnbreakableMind />} />
