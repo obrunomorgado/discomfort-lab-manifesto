@@ -1,6 +1,6 @@
 
 import { UserProgress, Badge } from '@/types/user';
-import { checkForNewBadges, checkForBadgeRemoval } from '@/utils/badgeChecker';
+import { checkForNewBadges } from '@/utils/badgeChecker';
 
 export const applyMissionResult = (
   progress: UserProgress,
@@ -9,9 +9,8 @@ export const applyMissionResult = (
 ): { newProgress: UserProgress; newBadges: Badge[]; removedBadges: string[] } => {
   const newProgress = { ...progress };
   
-  // Verificar badges para aplicar/remover
+  // Verificar badges para aplicar
   const newBadges = checkForNewBadges(newProgress);
-  const badgesToRemove = checkForBadgeRemoval(newProgress);
   
   // Adicionar novos badges
   newBadges.forEach(badge => {
@@ -19,15 +18,8 @@ export const applyMissionResult = (
     newProgress.totalPoints += badge.points;
   });
   
-  // Remover badges (principalmente o de vergonha)
-  badgesToRemove.forEach(badgeId => {
-    const badgeIndex = newProgress.badges.findIndex(b => b.id === badgeId);
-    if (badgeIndex !== -1) {
-      const removedBadge = newProgress.badges[badgeIndex];
-      newProgress.badges.splice(badgeIndex, 1);
-      newProgress.totalPoints -= removedBadge.points;
-    }
-  });
+  // For now, no badges are removed - this can be implemented later if needed
+  const badgesToRemove: string[] = [];
   
   return { newProgress, newBadges, removedBadges: badgesToRemove };
 };
