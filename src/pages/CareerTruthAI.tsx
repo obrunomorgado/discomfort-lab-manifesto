@@ -16,89 +16,111 @@ const CareerTruthAI = () => {
     
     setIsAnalyzing(true);
     
-    // Simulate AI analysis with storytelling
+    // Simulate AI analysis with professional self-sabotage focus
     setTimeout(() => {
-      setAnalysis(`🔍 **A ELIMINAÇÃO COMEÇA...**
+      setAnalysis(`💼 **AUTÓPSIA PROFISSIONAL INICIADA...**
 
-*O Dr. Desculpas, um especialista implacável com 30 anos destruindo justificativas patéticas, ajusta seus óculos e observa atentamente os fragmentos da sua vida. O silêncio da sala é quebrado apenas pelo som de papel sendo rasgado...*
-
----
-
-**"Fascinante... absolutamente fascinante."** *ele murmura, balançando a cabeça.*
-
-**DIAGNÓSTICO ANTI-DESCULPAS - CASO #${Math.floor(Math.random() * 9999)}**
-
-*O Dr. se vira para você com um olhar que perfura a alma.*
-
-**"Sabe o que eu vejo aqui? Uma pessoa que transformou desculpas em arte. Deixe-me mostrar suas obras-primas..."**
+*Dr. Desculpas, especialista em autossabotagem profissional com 25 anos destruindo carreiras patéticas, ajusta seus óculos e observa os destroços da sua trajetória profissional. O silêncio da sala é quebrado apenas pelo som de contratos sendo rasgados...*
 
 ---
 
-🚨 **AS DESCULPAS ENCONTRADAS NO LOCAL:**
+**"Impressionante... simplesmente impressionante."** *ele murmura, balançando a cabeça com desprezo.*
 
-**DESCULPA #1: "Não Tenho Tempo"**
-*"Clássica. Você tem tempo para redes sociais, séries, reclamações, mas não para mudar sua vida. 'Tempo' é sua desculpa favorita porque parece legítima."*
+**DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - CASO #${Math.floor(Math.random() * 9999)}**
 
-**DESCULPA #2: "Não É o Momento Certo"**
-*"Ah, sim. Você está esperando as estrelas se alinhar, a economia melhorar, segunda-feira chegar... O 'momento certo' é um mito que você criou para justificar a inação."*
+*O Dr. se vira para você com um olhar que perfura sua alma corporativa.*
 
-**DESCULPA #3: "É Muito Difícil"**
-*"Tradução: 'Eu prefiro a dor familiar da mediocridade à dor desconhecida do crescimento'. Você escolheu o sofrimento passivo."*
+**"Sabe o que eu vejo aqui? Um profissional que transformou autossabotagem em arte. Deixe-me mostrar suas obras-primas destrutivas..."**
 
 ---
 
-*O Dr. Desculpas se levanta e caminha até a janela, observando pessoas correndo atrás dos sonhos lá fora.*
+🚨 **PADRÕES DE AUTOSSABOTAGEM IDENTIFICADOS:**
 
-**"Agora, a parte que vai doer..."**
+**SABOTAGEM #1: "Perfeccionismo Paralisante"**
+*"Clássico. Você nunca entrega nada porque 'não está perfeito ainda'. Enquanto isso, outros entregam 80% e sobem na carreira. Você fica com seus 100% que nunca saem da gaveta."*
 
-⚡ **O VEREDICTO IMPLACÁVEL:**
+**SABOTAGEM #2: "Síndrome do Impostor Profissional"**
+*"Você rejeita oportunidades achando que 'não está preparado'. Spoiler: ninguém está 100% preparado. Mas eles aceitam e aprendem. Você fica esperando a preparação perfeita que nunca chega."*
+
+**SABOTAGEM #3: "Evitação de Feedback"**
+*"Você foge de avaliações, reuniões one-on-one e conversas difíceis. Como diabos espera crescer se não sabe onde está errando? Você prefere a ignorância confortável."*
+
+**SABOTAGEM #4: "Procrastinação Estratégica"**
+*"Sempre deixa projetos importantes para última hora, criando drama e stress. Depois reclama que não tem tempo. Você CRIA a própria escassez de tempo."*
+
+---
+
+*O Dr. Desculpas se levanta e caminha até uma parede coberta de gráficos de carreiras destruídas.*
+
+**"Agora, a parte que vai doer de verdade..."**
+
+⚡ **O VEREDICTO PROFISSIONAL IMPLACÁVEL:**
 
 *Ele se vira dramaticamente para você.*
 
-**"Você está desperdiçando sua única existência alimentando uma coleção de desculpas premium. Cada dia que passa, você fica mais expert em justificar por que não age, mas zero expert em realmente viver."**
+**"Você está desperdiçando seu potencial profissional alimentando uma coleção premium de comportamentos autodestrutivos. Cada reunião perdida, cada oportunidade rejeitada, cada feedback ignorado é um tijolo na parede que você mesmo constrói para limitar sua carreira."**
 
 ---
 
-📋 **SEU PROTOCOLO DE EXTERMÍNIO - OS PRÓXIMOS 90 DIAS:**
+📋 **SEU PROTOCOLO ANTI-SABOTAGEM - OS PRÓXIMOS 90 DIAS:**
 
-*O Dr. pega uma prancheta e começa a escrever com determinação.*
+*O Dr. pega uma prancheta com logo corporativo e começa a escrever com determinação militar.*
 
-**FASE 1 - OS PRIMEIROS 30 DIAS: "IDENTIFICAÇÃO E CERCO"**
-- *"Você vai documentar TODA desculpa que sair da sua boca. Sem exceção."*
-- *"Para cada 'não posso', você vai listar 3 maneiras de como PODE."*
-- *"Elimine a palavra 'mas' do seu vocabulário por 30 dias."*
+**FASE 1 - DIAS 1-30: "MAPEAMENTO DA DESTRUIÇÃO"**
+- *"Documente TODA vez que você evita uma tarefa importante por 'não estar pronta ainda'."*
+- *"Para cada 'não sei se consigo', liste 3 pessoas que conseguiram com menos experiência que você."*
+- *"Elimine a frase 'quando eu estiver preparado' do seu vocabulário profissional."*
+- *"Aceite uma tarefa que te assusta ESTA SEMANA."*
 
-**FASE 2 - DIAS 31-60: "ATAQUE FRONTAL"**
-- *"Cada desculpa identificada vira uma ação imediata e oposta."*
-- *"Você não vai mais explicar por que não fez. Vai fazer e ponto."*
-- *"Substitua 'eu tentei' por 'eu fiz' ou 'eu não fiz'."*
+**FASE 2 - DIAS 31-60: "CONFRONTO DIRETO"**
+- *"Peça feedback brutal para seu chefe. Não aceite respostas vagas."*
+- *"Candidatar-se a UMA vaga que você acha que está 'acima do seu nível'."*
+- *"Fale em uma reunião onde normalmente ficaria calado."*
+- *"Substitua 'eu tentei' por 'eu entreguei' ou 'eu não entreguei'."*
 
-**FASE 3 - DIAS 61-90: "EXTERMÍNIO TOTAL"**
-- *"Você será uma máquina anti-desculpas."*
-- *"Outras pessoas vão notar que você parou de reclamar e começou a entregar."*
-- *"Sua nova identidade: alguém que age ao invés de justificar."*
+**FASE 3 - DIAS 61-90: "EXECUÇÃO IMPIEDOSA"**
+- *"Você será uma máquina anti-sabotagem profissional."*
+- *"Outros vão notar que você parou de fazer drama e começou a entregar resultados."*
+- *"Sua nova identidade: alguém que executa ao invés de se sabotar."*
+- *"Negocie um aumento ou promoção baseado nos resultados entregues."*
 
 ---
 
-*O Dr. Desculpas remove os óculos e olha diretamente nos seus olhos.*
+💰 **PROTOCOLOS ESPECÍFICOS ANTI-SABOTAGEM:**
 
-**"Escute bem: Esta não é terapia motivacional. É uma cirurgia de emergência na sua mentalidade. Você tem duas opções:"**
+**PARA REUNIÕES:**
+*"Pare de chegar atrasado, prepare suas falas antecipadamente, e FALE pelo menos uma vez por reunião. Chega de ser o fantasma corporativo."*
 
-🔥 **"Aceite este protocolo e elimine suas desculpas HOJE..."**
+**PARA PROJETOS:**
+*"Entregue na data. Mesmo que seja 80%. Pare de usar 'perfeição' como desculpa para atraso."*
 
-💀 **"...ou continue colecionando justificativas até o fim da vida."**
+**PARA NETWORKING:**
+*"Conecte-se com uma pessoa nova por semana. Chega de 'não sou bom em networking'. Ninguém nasceu sabendo."*
 
-*Ele estende a mão com um documento.*
+**PARA PROMOÇÕES:**
+*"Documente seus resultados SEMANALMENTE. Quando surgir uma oportunidade, você terá dados, não achismos."*
 
-**"A escolha é sua. Mas saiba que eu já vi milhares de casos. Os que implementam o protocolo, renascem. Os que 'vão pensar no assunto'... bem, continuam sendo especialistas em desculpas."**
+---
 
-*A sala fica em silêncio. O som do relógio marca cada segundo da sua decisão...*
+*O Dr. Desculpas remove os óculos e olha diretamente nos seus olhos corporativos.*
 
-**"Você vai continuar sendo um artista de desculpas ou vai se tornar um executor implacável?"**
+**"Escute bem: Esta não é coaching motivacional. É uma cirurgia de emergência na sua carreira. Você tem duas opções:"**
 
-*O Dr. Desculpas cruza os braços e espera.*
+🔥 **"Implemente este protocolo e pare de se sabotar HOJE..."**
 
-**"Sua resposta define os próximos 90 dias da sua vida."**
+💀 **"...ou continue sendo um especialista em autossabotagem até se aposentar no mesmo cargo medíocre."**
+
+*Ele estende a mão com um contrato de mudança.*
+
+**"A escolha é sua. Mas saiba que eu já vi milhares de carreiras. As que implementam o protocolo anti-sabotagem, decolam. As que 'vão pensar no assunto'... bem, continuam se sabotando em meetings infinitos."**
+
+*A sala fica em silêncio. O som do relógio marca cada segundo da sua decisão profissional...*
+
+**"Você vai continuar sendo um artista da autossabotagem ou vai se tornar um executor de resultados?"**
+
+*O Dr. Desculpas cruza os braços e espera sua resposta profissional.*
+
+**"Sua escolha define os próximos 90 dias da sua carreira."**
       `);
       setIsAnalyzing(false);
     }, 4000);
@@ -107,27 +129,27 @@ const CareerTruthAI = () => {
   return (
     <div className="min-h-screen py-16 px-4 bg-gradient-to-b from-dark-bg to-dark-bg/90">
       <div className="max-w-4xl mx-auto">
-        {/* Cinematic Header */}
+        {/* Professional Header */}
         <div className="text-center mb-12 relative">
           <div className="absolute inset-0 bg-warm-yellow/5 blur-3xl rounded-full"></div>
           <Badge className="bg-red-600 text-white font-bebas mb-4 relative z-10 animate-pulse">
-            ELIMINAÇÃO BRUTAL
+            AUTÓPSIA PROFISSIONAL
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bebas text-warm-gray mb-6 tracking-wider relative z-10">
             SEM<span className="text-warm-yellow">DESCULPAS</span>IA
           </h1>
           <div className="relative z-10 max-w-3xl mx-auto">
             <p className="text-xl text-warm-gray/80 font-inter mb-4 italic">
-              "Uma sala fria. Uma mesa de aço. Um especialista em eliminar desculpas 
-              ajusta suas luvas e olha para você..."
+              "Uma sala corporativa fria. Uma mesa de aço. Um especialista em autossabotagem profissional 
+              ajusta suas luvas e analisa os destroços da sua carreira..."
             </p>
             <p className="text-lg text-warm-gray/60 font-inter">
-              <strong className="text-warm-yellow">"Pronto para o extermínio total das suas justificativas?"</strong>
+              <strong className="text-warm-yellow">"Pronto para descobrir como você sabota sua própria carreira?"</strong>
             </p>
           </div>
         </div>
 
-        {/* Dramatic Warning */}
+        {/* Professional Warning */}
         <Alert className="bg-red-600/10 border-red-600/30 mb-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-red-600/5 to-transparent"></div>
           <AlertDescription className="text-warm-gray font-inter relative z-10">
@@ -136,40 +158,40 @@ const CareerTruthAI = () => {
               <div>
                 <strong className="text-red-400">O Dr. Desculpas adverte:</strong>
                 <p className="mt-1">
-                  "Eu não valido suas justificativas. Não ofereço ombro para chorar. 
-                  Minha especialidade é destruir desculpas sem anestesia."
+                  "Eu não sou coach motivacional. Não vou dizer que você é incrível. 
+                  Minha especialidade é identificar como você sabota sua própria carreira sem anestesia."
                 </p>
               </div>
             </div>
           </AlertDescription>
         </Alert>
 
-        {/* Main Story Interface */}
+        {/* Main Professional Interface */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Story Input Section */}
+          {/* Input Section */}
           <Card className="bg-dark-card border-dark-border relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-warm-yellow/50 to-transparent"></div>
             <CardHeader>
               <CardTitle className="text-2xl font-bebas text-warm-yellow flex items-center space-x-2">
-                <span>📋</span>
-                <span>SUA CONFISSÃO</span>
+                <span>💼</span>
+                <span>CONFISSÃO PROFISSIONAL</span>
               </CardTitle>
               <CardDescription className="text-warm-gray/70 font-inter italic">
-                "O Dr. Desculpas pega sua prancheta e te observa intensamente. 
-                'Liste suas desculpas favoritas. Todas. Sem exceção.'"
+                "O Dr. Desculpas pega sua prancheta corporativa e te observa intensamente. 
+                'Liste seus comportamentos de autossabotagem profissional. Todos. Sem exceção.'"
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="bg-warm-yellow/10 p-3 rounded border-l-4 border-warm-yellow">
                   <p className="text-warm-yellow font-inter text-sm font-medium">
-                    💭 "Conte sobre suas desculpas para não mudar, não agir, não crescer... 
-                    Quanto mais honesto, mais eficaz será o extermínio."
+                    💭 "Conte sobre como você sabota sua própria carreira. Procrastinação em projetos importantes? 
+                    Evita feedback? Rejeita oportunidades por 'não estar preparado'? Seja brutalmente honesto."
                   </p>
                 </div>
                 
                 <Textarea
-                  placeholder="Dr. Desculpas ergue a sobrancelha: 'Vamos lá, me conte suas desculpas favoritas. Por que você não faz exercício? Por que não muda de emprego? Por que não estuda? Quais suas justificativas premium?'"
+                  placeholder="Dr. Desculpas ergue a sobrancelha: 'Vamos lá, me conte como você sabota sua carreira. Por que evita apresentações? Por que não pede aumento? Por que procrastina projetos importantes? Quais seus padrões de autossabotagem profissional?'"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   className="min-h-[200px] bg-dark-bg border-dark-border text-warm-gray resize-none font-inter focus:border-warm-yellow/50 transition-colors"
@@ -181,23 +203,23 @@ const CareerTruthAI = () => {
                 disabled={!userInput.trim() || isAnalyzing}
                 className="w-full bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90 font-bebas text-lg tracking-wider py-6 transition-all duration-300 hover:scale-[1.02]"
               >
-                {isAnalyzing ? "🔍 IDENTIFICANDO DESCULPAS..." : "⚡ INICIAR EXTERMÍNIO"}
+                {isAnalyzing ? "🔍 ANALISANDO AUTOSSABOTAGEM..." : "⚡ INICIAR AUTÓPSIA PROFISSIONAL"}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Results Story Section */}
+          {/* Results Section */}
           <Card className="bg-dark-card border-dark-border relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600/50 to-transparent"></div>
             <CardHeader>
               <CardTitle className="text-2xl font-bebas text-warm-yellow flex items-center space-x-2">
-                <span>🔬</span>
-                <span>RELATÓRIO ANTI-DESCULPAS</span>
+                <span>📊</span>
+                <span>RELATÓRIO DE AUTOSSABOTAGEM</span>
               </CardTitle>
               <CardDescription className="text-warm-gray/70 font-inter italic">
                 {analysis ? 
-                  "O Dr. Desculpas termina sua análise e remove as luvas. 'O diagnóstico está pronto.'" : 
-                  "O laboratório aguarda sua lista de desculpas para iniciar o extermínio..."
+                  "O Dr. Desculpas termina sua análise profissional e remove as luvas. 'O diagnóstico está pronto.'" : 
+                  "O laboratório de autossabotagem aguarda seus padrões destrutivos profissionais..."
                 }
               </CardDescription>
             </CardHeader>
@@ -210,10 +232,10 @@ const CareerTruthAI = () => {
                   </div>
                   <div className="text-center space-y-2">
                     <p className="text-warm-gray font-inter animate-pulse">
-                      🔍 <em>"Catalogando suas justificativas..."</em>
+                      🔍 <em>"Catalogando padrões de autossabotagem profissional..."</em>
                     </p>
                     <p className="text-warm-gray/60 font-inter text-sm">
-                      Dr. Desculpas examina cada desculpa meticulosamente
+                      Dr. Desculpas examina cada comportamento autodestrutivo meticulosamente
                     </p>
                   </div>
                 </div>
@@ -227,8 +249,8 @@ const CareerTruthAI = () => {
                   <div className="mt-8 pt-6 border-t border-dark-border space-y-3">
                     <div className="bg-warm-yellow/10 p-4 rounded border border-warm-yellow/30">
                       <p className="text-warm-yellow font-inter text-sm font-medium text-center">
-                        💀 "O extermínio está completo. Agora você decide: 
-                        implementar o protocolo ou continuar colecionando desculpas?"
+                        💀 "A autópsia profissional está completa. Agora você decide: 
+                        implementar o protocolo anti-sabotagem ou continuar destruindo sua própria carreira?"
                       </p>
                     </div>
                     <Button 
@@ -239,7 +261,7 @@ const CareerTruthAI = () => {
                       variant="outline"
                       className="w-full border-warm-yellow text-warm-yellow hover:bg-warm-yellow hover:text-dark-bg font-bebas tracking-wider transition-all duration-300"
                     >
-                      🔄 NOVO EXTERMÍNIO
+                      🔄 NOVA AUTÓPSIA PROFISSIONAL
                     </Button>
                   </div>
                 </div>
@@ -247,8 +269,8 @@ const CareerTruthAI = () => {
                 <div className="text-center py-12 space-y-4">
                   <div className="text-6xl mb-4">🕵️</div>
                   <p className="text-warm-gray/60 font-inter italic">
-                    "O Dr. Desculpas aguarda pacientemente sua lista de justificativas. 
-                    Apenas então o extermínio das suas desculpas poderá começar..."
+                    "O Dr. Desculpas aguarda pacientemente sua confissão de autossabotagem profissional. 
+                    Apenas então a autópsia da sua carreira poderá começar..."
                   </p>
                 </div>
               )}
@@ -256,12 +278,12 @@ const CareerTruthAI = () => {
           </Card>
         </div>
 
-        {/* Story Instructions */}
+        {/* Professional Instructions */}
         <Card className="bg-dark-card/50 border-dark-border mt-8 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-warm-yellow/5 to-transparent rounded-lg"></div>
           <CardHeader>
             <CardTitle className="text-xl font-bebas text-warm-gray relative z-10">
-              🎭 COMO FUNCIONA O EXTERMÍNIO DE DESCULPAS
+              🎭 COMO FUNCIONA A AUTÓPSIA DE AUTOSSABOTAGEM PROFISSIONAL
             </CardTitle>
           </CardHeader>
           <CardContent className="relative z-10">
@@ -272,8 +294,8 @@ const CareerTruthAI = () => {
                   <span>1. IDENTIFICAÇÃO</span>
                 </h3>
                 <p className="text-warm-gray/70 italic">
-                  "O Dr. analisa cada desculpa sua em busca de padrões de 
-                  autossabotagem e evasão de responsabilidade."
+                  "O Dr. analisa cada padrão de autossabotagem profissional em busca 
+                  de comportamentos que limitam sua carreira e crescimento."
                 </p>
               </div>
               <div className="space-y-2">
@@ -282,18 +304,18 @@ const CareerTruthAI = () => {
                   <span>2. DIAGNÓSTICO BRUTAL</span>
                 </h3>
                 <p className="text-warm-gray/70 italic">
-                  "Você recebe uma análise implacável sobre como suas 
-                  justificativas estão destruindo seu potencial."
+                  "Você recebe uma análise implacável sobre como seus 
+                  comportamentos estão sabotando seu potencial profissional."
                 </p>
               </div>
               <div className="space-y-2">
                 <h3 className="font-bebas text-warm-yellow mb-2 flex items-center space-x-2">
                   <span>🔥</span>
-                  <span>3. PROTOCOLO DE AÇÃO</span>
+                  <span>3. PROTOCOLO ANTI-SABOTAGEM</span>
                 </h3>
                 <p className="text-warm-gray/70 italic">
-                  "Um plano específico para os próximos 90 dias. 
-                  Sem desculpas, apenas execução."
+                  "Um plano específico para os próximos 90 dias focado 
+                  em eliminar comportamentos que limitam sua carreira."
                 </p>
               </div>
             </div>

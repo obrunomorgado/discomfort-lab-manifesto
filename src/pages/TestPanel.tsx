@@ -13,7 +13,7 @@ const TestPanel = () => {
   const testBadges: Record<string, BadgeType> = {
     "career-truth-ai": {
       id: 'excuse-destroyer',
-      name: 'Destruidor de Desculpas',
+      name: 'Destruidor de Autossabotagem',
       description: 'Completou o Sem Desculpas IA',
       icon: '💼',
       category: 'completion',
@@ -75,7 +75,7 @@ const TestPanel = () => {
     {
       id: "career-truth-ai",
       title: "Sem Desculpas IA",
-      description: "Extermínio brutal das suas justificativas. Descubra seus padrões de evasão e receba um protocolo de 90 dias para eliminar desculpas.",
+      description: "Autópsia brutal dos seus padrões de autossabotagem profissional. Descubra como você sabota sua própria carreira e receba um protocolo de 90 dias para eliminar comportamentos autodestrutivos.",
       difficulty: "BRUTAL",
       status: "Disponível",
       link: "/career-truth-ai",
@@ -294,7 +294,7 @@ const TestPanel = () => {
             NÃO SABE POR ONDE COMEÇAR?
           </h2>
           <p className="text-warm-gray/60 font-inter mb-6">
-            Recomendamos começar pelo Sem Desculpas IA. É o teste mais revelador para identificar suas justificativas.
+            Recomendamos começar pelo Sem Desculpas IA. É o teste mais revelador para identificar como você sabota sua própria carreira.
           </p>
           <Link to="/career-truth-ai">
             <Button 
