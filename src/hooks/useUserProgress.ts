@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { UserProgress, TestResult, DailyAction, CreditTransaction } from '@/types/user';
 import { checkAndApplyPenalties } from '@/utils/penaltyChecker';
@@ -9,9 +8,16 @@ import { addTestResult } from './useUserProgress/tests';
 import { completeAction } from './useUserProgress/actions';
 import { performDailyCheckIn } from './useUserProgress/checkin';
 import { applyMissionResult } from './useUserProgress/missions';
+import { useNotifications } from './useNotifications';
 
 export const useUserProgress = () => {
   const [progress, setProgress] = useState<UserProgress>(() => loadProgress());
+  const {
+    scheduleCheckInReminder,
+    schedulePenaltyAlert,
+    scheduleEmergencyConsultationReminder,
+    scheduleDailyMotivation
+  } = useNotifications();
 
   useEffect(() => {
     const initialProgress = loadProgress();
@@ -19,11 +25,51 @@ export const useUserProgress = () => {
     
     // Verificar penalidades após carregar dados
     checkAndApplyPenalties(initialProgress, handleSaveProgress);
+    
+    // Agendar notificações baseadas no estado atual
+    scheduleNotificationsBasedOnProgress(initialProgress);
   }, []);
 
-  const handleSaveProgress = (newProgress: UserProgress) => {
+  const scheduleNotificationsBasedOnProgress = async (currentProgress: UserProgress) => {
+    // Agendar check-in para amanhã se não fez hoje
+    const today = new Date();
+    const lastCheckIn = currentProgress.lastCheckIn ? new Date(currentProgress.lastCheckIn) : null;
+    const hasCheckedInToday = lastCheckIn && 
+      lastCheckIn.toDateString() === today.toDateString();
+
+    if (!hasCheckedInToday) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0); // 9 AM
+      await scheduleCheckInReminder(tomorrow);
+    }
+
+    // Agendar consulta de emergência se necessário
+    await scheduleEmergencyConsultationReminder(currentProgress);
+
+    // Agendar motivação diária
+    await scheduleDailyMotivation();
+  };
+
+  const handleSaveProgress = async (newProgress: UserProgress) => {
     setProgress(newProgress);
     saveProgress(newProgress);
+    
+    // Reagendar notificações quando o progresso muda
+    await scheduleNotificationsBasedOnProgress(newProgress);
+  };
+
+  const handleDailyCheckIn = async () => {
+    const { newProgress, newBadges } = performDailyCheckIn(progress);
+    await handleSaveProgress(newProgress);
+    
+    // Agendar próximo check-in
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(9, 0, 0, 0);
+    await scheduleCheckInReminder(tomorrow);
+    
+    return newBadges;
   };
 
   const handleAddCredits = (amount: number, description: string, type: CreditTransaction['type'] = 'purchase') => {
@@ -51,12 +97,6 @@ export const useUserProgress = () => {
     const { newProgress, isRecovered } = completeAction(progress, actionId);
     handleSaveProgress(newProgress);
     return isRecovered;
-  };
-
-  const handleDailyCheckIn = () => {
-    const { newProgress, newBadges } = performDailyCheckIn(progress);
-    handleSaveProgress(newProgress);
-    return newBadges;
   };
 
   const handleApplyMissionResult = (missionId: string, success: boolean) => {
