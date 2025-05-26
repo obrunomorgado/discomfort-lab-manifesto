@@ -1,35 +1,50 @@
 
 import { UserProgress, DailyAction } from '@/types/user';
-import { BADGES_DEFINITIONS } from '@/constants/badges';
+import { AVAILABLE_BADGES } from '@/constants/badges';
 
-export const completeAction = (
-  progress: UserProgress,
-  actionId: string
-): { newProgress: UserProgress; isRecovered: boolean } => {
+export const completeAction = (progress: UserProgress, actionId: string): { newProgress: UserProgress; isRecovered: boolean } => {
   const newProgress = { ...progress };
-  const actionIndex = newProgress.dailyActions.findIndex(a => a.id === actionId);
+  const actionIndex = newProgress.dailyActions.findIndex(action => action.id === actionId);
   
-  if (actionIndex !== -1) {
-    const action = newProgress.dailyActions[actionIndex];
-    action.completed = true;
-    
-    // Reduzir pontos negativos
-    newProgress.debtPoints = Math.max(0, newProgress.debtPoints - action.points);
-    
-    // Verificar se conseguiu alta médica
-    if (newProgress.debtPoints === 0 && newProgress.isInTreatment) {
-      newProgress.isInTreatment = false;
-      // Badge de recuperação
-      const recoveredBadge = BADGES_DEFINITIONS.find(b => b.id === 'recovered');
-      if (recoveredBadge && !newProgress.badges.find(b => b.id === 'recovered')) {
-        newProgress.badges.push({ ...recoveredBadge, unlockedAt: new Date() });
-        newProgress.totalPoints += recoveredBadge.points;
-      }
-    }
-    
-    newProgress.lastActivity = new Date();
+  if (actionIndex === -1) return { newProgress, isRecovered: false };
+  
+  const action = newProgress.dailyActions[actionIndex];
+  action.completed = true;
+  
+  // Add points and reduce debt
+  newProgress.totalPoints += action.points;
+  newProgress.debtPoints = Math.max(0, newProgress.debtPoints - action.points);
+  
+  // Check if recovered (debt cleared)
+  const isRecovered = newProgress.debtPoints === 0 && progress.debtPoints > 0;
+  if (isRecovered) {
+    newProgress.isInTreatment = false;
   }
   
-  const isRecovered = newProgress.debtPoints === 0 && newProgress.isInTreatment === false;
+  newProgress.lastActivity = new Date();
+  
   return { newProgress, isRecovered };
+};
+
+export const getPendingActions = (progress: UserProgress): DailyAction[] => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  return progress.dailyActions.filter(action => {
+    const actionDate = new Date(action.dueDate);
+    actionDate.setHours(0, 0, 0, 0);
+    return !action.completed && actionDate <= today;
+  });
+};
+
+export const getCompletedActionsToday = (progress: UserProgress): DailyAction[] => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  return progress.dailyActions.filter(action => {
+    if (!action.completed) return false;
+    const actionDate = new Date(action.dueDate);
+    actionDate.setHours(0, 0, 0, 0);
+    return actionDate.getTime() === today.getTime();
+  });
 };

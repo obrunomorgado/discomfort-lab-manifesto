@@ -74,7 +74,7 @@ export const useMissionHandlers = () => {
       }
       
       newProgress.credits = Math.max(0, newProgress.credits - penalty);
-      mission.penaltyApplied = penalty;
+      // Remove the penaltyApplied property that doesn't exist in the type
       mission.completed = false;
       mission.completedAt = new Date();
       
