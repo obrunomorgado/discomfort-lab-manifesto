@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { PenaltyContract, PenaltyLog } from '@/types/penalty';
-import { mockDatabase } from '@/services/mockDatabase';
+import { mockDatabase } from '@/services/database/mockDatabase';
 
 export const usePenaltyContract = () => {
   const [activeContract, setActiveContract] = useState<PenaltyContract | null>(null);
