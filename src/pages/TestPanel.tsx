@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,14 @@ const TestPanel = () => {
       difficulty: "BRUTAL",
       status: "Disponível",
       link: "/career-truth-ai"
+    },
+    {
+      id: "arquiteto-da-verdade",
+      title: "Arquiteto da Verdade",
+      description: "Desconstrua suas mentiras internas e projete uma nova identidade baseada em verdade, propósito e responsabilidade.",
+      difficulty: "INTENSO",
+      status: "Disponível",
+      link: "/arquiteto-da-verdade"
     },
     {
       id: "unbreakable-mind",

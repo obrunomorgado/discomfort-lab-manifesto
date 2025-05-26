@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import TestPanel from "./pages/TestPanel";
 import CareerTruthAI from "./pages/CareerTruthAI";
 import UnbreakableMind from "./pages/UnbreakableMind";
+import ArquitetoDaVerdade from "./pages/ArquitetoDaVerdade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/testes" element={<TestPanel />} />
             <Route path="/career-truth-ai" element={<CareerTruthAI />} />
             <Route path="/unbreakable-mind" element={<UnbreakableMind />} />
+            <Route path="/arquiteto-da-verdade" element={<ArquitetoDaVerdade />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
