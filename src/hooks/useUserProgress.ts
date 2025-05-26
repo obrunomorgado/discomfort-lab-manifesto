@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { UserProgress, TestResult, Badge, DailyAction, CreditTransaction } from '@/types/user';
 import { BADGES_DEFINITIONS } from '@/constants/badges';
 import { checkAndApplyPenalties } from '@/utils/penaltyChecker';
-import { checkForNewBadges } from '@/utils/badgeChecker';
+import { checkForNewBadges, checkForBadgeRemoval } from '@/utils/badgeChecker';
 import { generateReferralCode, calculateUserStats, getPendingActions, getCompletedActionsToday } from '@/utils/progressHelpers';
 
 const INITIAL_PROGRESS: UserProgress = {
@@ -272,6 +271,34 @@ export const useUserProgress = () => {
     return newBadges;
   };
 
+  // Nova função para aplicar sistema de badges de vergonha
+  const applyMissionResult = (missionId: string, success: boolean) => {
+    const newProgress = { ...progress };
+    
+    // Verificar badges para aplicar/remover
+    const newBadges = checkForNewBadges(newProgress);
+    const badgesToRemove = checkForBadgeRemoval(newProgress);
+    
+    // Adicionar novos badges
+    newBadges.forEach(badge => {
+      newProgress.badges.push({ ...badge, unlockedAt: new Date() });
+      newProgress.totalPoints += badge.points;
+    });
+    
+    // Remover badges (principalmente o de vergonha)
+    badgesToRemove.forEach(badgeId => {
+      const badgeIndex = newProgress.badges.findIndex(b => b.id === badgeId);
+      if (badgeIndex !== -1) {
+        const removedBadge = newProgress.badges[badgeIndex];
+        newProgress.badges.splice(badgeIndex, 1);
+        newProgress.totalPoints -= removedBadge.points;
+      }
+    });
+    
+    saveProgress(newProgress);
+    return { newBadges, removedBadges: badgesToRemove };
+  };
+
   return {
     progress,
     addTestResult,
@@ -279,6 +306,7 @@ export const useUserProgress = () => {
     spendCredits,
     completeAction,
     performDailyCheckIn,
+    applyMissionResult,
     getStats: () => calculateUserStats(progress),
     getPendingActions: () => getPendingActions(progress),
     getCompletedActionsToday: () => getCompletedActionsToday(progress),

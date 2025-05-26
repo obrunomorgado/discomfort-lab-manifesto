@@ -91,5 +91,14 @@ export const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
     category: 'recovery',
     rarity: 'rare',
     points: 400
+  },
+  {
+    id: 'shame-duck',
+    name: 'Patinho da Vergonha',
+    description: '3 falhas consecutivas em missões - precisa de redenção',
+    icon: '🐥',
+    category: 'shame',
+    rarity: 'common',
+    points: -100
   }
 ];

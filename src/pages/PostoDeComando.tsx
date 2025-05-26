@@ -1,8 +1,8 @@
-
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePenaltyContract } from '@/hooks/usePenaltyContract';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import PenaltyStatusChip from '@/components/SkinInTheGame/PenaltyStatusChip';
 import PenaltySetupModal from '@/components/SkinInTheGame/PenaltySetupModal';
 import PenaltyManagement from '@/components/SkinInTheGame/PenaltyManagement';
@@ -21,8 +21,9 @@ import OperationHistory from '@/components/PostoDeComando/OperationHistory';
 import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
 
 const PostoDeComando = () => {
-  const { progress, getStats, getPendingActions, saveProgress } = useUserProgress();
+  const { progress, getStats, getPendingActions, saveProgress, applyMissionResult } = useUserProgress();
   const { activeContract } = usePenaltyContract();
+  const { toast } = useToast();
   const [showPenaltySetup, setShowPenaltySetup] = useState(false);
   const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
   const [showMissionSelector, setShowMissionSelector] = useState(false);
@@ -95,6 +96,38 @@ const PostoDeComando = () => {
     newProgress.lastActivity = new Date();
     
     saveProgress(newProgress);
+    
+    // Aplicar sistema de badges de vergonha
+    const { newBadges, removedBadges } = applyMissionResult(mission.selectedMission.id, success);
+    
+    // Mostrar notificações para badges
+    if (newBadges.length > 0) {
+      newBadges.forEach(badge => {
+        if (badge.id === 'shame-duck') {
+          toast({
+            title: "🐥 BADGE DE VERGONHA APLICADO!",
+            description: "3 falhas consecutivas. Complete uma missão para redenção.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: `🏆 Badge Desbloqueado!`,
+            description: `${badge.name}: ${badge.description}`,
+          });
+        }
+      });
+    }
+    
+    if (removedBadges.length > 0) {
+      removedBadges.forEach(badgeId => {
+        if (badgeId === 'shame-duck') {
+          toast({
+            title: "🎉 REDENÇÃO CONQUISTADA!",
+            description: "Badge de Vergonha removido com sucesso!",
+          });
+        }
+      });
+    }
   };
 
   const handleDiscomfortAccept = (card: any) => {

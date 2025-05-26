@@ -47,6 +47,15 @@ export const checkForNewBadges = (currentProgress: UserProgress): Badge[] => {
         const completedTests = currentProgress.testsCompleted.map(t => t.testId);
         shouldUnlock = availableTests.every(test => completedTests.includes(test));
         break;
+      case 'shame-duck':
+        // Verificar 3 falhas consecutivas nas últimas missões
+        if (currentProgress.missionsCompleted.length >= 3) {
+          const lastThreeMissions = currentProgress.missionsCompleted
+            .slice(-3)
+            .every(mission => mission.completed === false);
+          shouldUnlock = lastThreeMissions;
+        }
+        break;
     }
 
     if (shouldUnlock) {
@@ -55,4 +64,19 @@ export const checkForNewBadges = (currentProgress: UserProgress): Badge[] => {
   });
 
   return newBadges;
+};
+
+export const checkForBadgeRemoval = (currentProgress: UserProgress): string[] => {
+  const badgesToRemove: string[] = [];
+  
+  // Remover badge de vergonha se conseguir uma missão bem-sucedida
+  const hasShameBadge = currentProgress.badges.some(b => b.id === 'shame-duck');
+  if (hasShameBadge && currentProgress.missionsCompleted.length > 0) {
+    const lastMission = currentProgress.missionsCompleted[currentProgress.missionsCompleted.length - 1];
+    if (lastMission.completed === true) {
+      badgesToRemove.push('shame-duck');
+    }
+  }
+  
+  return badgesToRemove;
 };
