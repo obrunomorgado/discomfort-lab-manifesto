@@ -62,11 +62,12 @@ const DailyReportModal = ({ isOpen, onClose, mission, onReport }: DailyReportMod
             : 'bg-cyber-warning/40 animate-pulse'
         }`}>
           {!missionSuccess && (
-            <div className="absolute inset-0 bg-red-500/20 animate-pulse" 
-                 style={{ 
-                   animation: 'flash-red 0.3s ease-in-out infinite alternate',
-                   animationDuration: '0.2s'
-                 }} />
+            <div 
+              className="absolute inset-0 bg-red-500/20 animate-pulse" 
+              style={{ 
+                animation: 'flash-red 0.3s ease-in-out infinite alternate, 0.2s'
+              }} 
+            />
           )}
         </div>
       )}

@@ -4,7 +4,7 @@ export interface Badge {
   name: string;
   description: string;
   icon: string;
-  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral';
+  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral' | 'shame';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   unlockedAt?: Date;
   points: number;
