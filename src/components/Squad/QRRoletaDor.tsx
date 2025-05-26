@@ -124,8 +124,7 @@ const QRRoletaDor = () => {
       playSound('squad_penalty');
       toast({
         title: "🎯 PENALIDADE SORTEADA!",
-        description: `${finalPenalty.name} - Execute imediatamente!`,
-        duration: 5000
+        description: `${finalPenalty.name} - Execute imediatamente!`
       });
     }, spinDuration);
   };
