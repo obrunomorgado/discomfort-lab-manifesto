@@ -41,9 +41,10 @@ const DiagnosisResults = ({ isAnalyzing, analysis }: DiagnosisResultsProps) => {
         ) : analysis ? (
           <div className="space-y-4">
             <div className="prose prose-invert max-w-none">
-              <div className="text-warm-gray/90 font-inter whitespace-pre-line leading-relaxed text-sm">
-                {analysis}
-              </div>
+              <div 
+                className="text-warm-gray/90 font-inter whitespace-pre-line leading-relaxed text-sm"
+                dangerouslySetInnerHTML={{ __html: analysis }}
+              />
             </div>
             <div className="mt-8 pt-6 border-t border-dark-border space-y-3">
               <div className="bg-red-600/10 p-4 rounded border border-red-600/30">

@@ -95,59 +95,59 @@ const CareerTruthAI = () => {
 
       addTestResult(testResult);
 
-      setAnalysis(`🏥 **DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - EMERGÊNCIA MÉDICA**
+      setAnalysis(`🏥 <strong>DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - EMERGÊNCIA MÉDICA</strong>
 
-*Dr. Desculpas ajusta os óculos e observa os resultados dos exames. O silêncio da sala é quebrado pelo bipe constante dos monitores...*
-
----
-
-**"Paciente... temos um quadro grave aqui."** *ele murmura, balançando a cabeça*
-
-**LAUDO MÉDICO - CASO #${Math.floor(Math.random() * 9999)}**
-
-🚨 **DIAGNÓSTICO CONFIRMADO: AUTOSSABOTAGEM PROFISSIONAL CRÔNICA**
-
-**PONTOS DE DÍVIDA GERADOS: -${debtPoints} pontos**
-
-*O Dr. se vira para você com expressão séria.*
-
-**"Você acumulou uma dívida de ${debtPoints} pontos de autossabotagem. Cada comportamento destrutivo tem um preço, e agora você vai pagar com AÇÕES."**
+<em>Dr. Desculpas ajusta os óculos e observa os resultados dos exames. O silêncio da sala é quebrado pelo bipe constante dos monitores...</em>
 
 ---
 
-⚡ **PROTOCOLO DE REABILITAÇÃO ATIVADO:**
+<strong>"Paciente... temos um quadro grave aqui."</strong> <em>ele murmura, balançando a cabeça</em>
 
-*Dr. Desculpas pega uma prancheta médica e começa a prescrever o tratamento.*
+<strong>LAUDO MÉDICO - CASO #${Math.floor(Math.random() * 9999)}</strong>
 
-**"Escute bem: Você está oficialmente em TRATAMENTO. Cada ação que você completar vai reduzir sua dívida. Quando chegar a ZERO, você recebe alta médica."**
+🚨 <strong>DIAGNÓSTICO CONFIRMADO: AUTOSSABOTAGEM PROFISSIONAL CRÔNICA</strong>
 
-📋 **SUAS PRESCRIÇÕES DIÁRIAS:**
+<strong>PONTOS DE DÍVIDA GERADOS: -${debtPoints} pontos</strong>
+
+<em>O Dr. se vira para você com expressão séria.</em>
+
+<strong>"Você acumulou uma dívida de ${debtPoints} pontos de autossabotagem. Cada comportamento destrutivo tem um preço, e agora você vai pagar com AÇÕES."</strong>
+
+---
+
+⚡ <strong>PROTOCOLO DE REABILITAÇÃO ATIVADO:</strong>
+
+<em>Dr. Desculpas pega uma prancheta médica e começa a prescrever o tratamento.</em>
+
+<strong>"Escute bem: Você está oficialmente em TRATAMENTO. Cada ação que você completar vai reduzir sua dívida. Quando chegar a ZERO, você recebe alta médica."</strong>
+
+📋 <strong>SUAS PRESCRIÇÕES DIÁRIAS:</strong>
 
 ${dailyActions.map((action, index) => 
-  `**${index + 1}.** ${action.description} *(+${action.points} pontos)*`
+  `<strong>${index + 1}.</strong> ${action.description} <em>(+${action.points} pontos)</em>`
 ).join('\n')}
 
 ---
 
-💊 **INSTRUÇÕES DE TRATAMENTO:**
+💊 <strong>INSTRUÇÕES DE TRATAMENTO:</strong>
 
-*O médico olha diretamente nos seus olhos.*
+<em>O médico olha diretamente nos seus olhos.</em>
 
-**"TODOS OS DIAS você deve fazer check-in aqui. Relatar o que completou. Sem desculpas, sem exceções."**
+<strong>"TODOS OS DIAS você deve fazer check-in aqui. Relatar o que completou. Sem desculpas, sem exceções."</strong>
 
-🔥 **"Se você falhar por mais de 24h, sua dívida AUMENTA. Se você completar tudo consistentemente, ganha badges de recuperação."**
+🔥 <strong>"Se você falhar por mais de 24h, sua dívida AUMENTA. Se você completar tudo consistentemente, ganha badges de recuperação."</strong>
 
-⚕️ **"Quando zerar sua dívida, você recebe ALTA MÉDICA e a badge 'Curado da Autossabotagem'."**
+⚕️ <strong>"Quando zerar sua dívida, você recebe ALTA MÉDICA e a badge 'Curado da Autossabotagem'."</strong>
 
 ---
 
-*Dr. Desculpas estende a receita médica.*
+<em>Dr. Desculpas estende a receita médica.</em>
 
-**"O tratamento começa AGORA. Primeiro check-in deve ser amanhã. Sem exceções."**
+<strong>"O tratamento começa AGORA. Primeiro check-in deve ser amanhã. Sem exceções."</strong>
 
-*O som dos monitores ecoa na sala...*
+<em>O som dos monitores ecoa na sala...</em>
 
-**"Você vai se curar da autossabotagem ou vai continuar sendo um paciente crônico?"**
+<strong>"Você vai se curar da autossabotagem ou vai continuar sendo um paciente crônico?"</strong>
       `);
       setIsAnalyzing(false);
       setShowCheckIn(true);
