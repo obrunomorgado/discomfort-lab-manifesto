@@ -28,12 +28,12 @@ const CombatMedic = ({ mode, message, showCharacter = true }: CombatMedicProps) 
         </div>
       </div>
 
-      <div className="flex items-start space-x-4 relative z-10">
+      <div className="flex items-start space-x-6 relative z-10">
         {showCharacter && (
           <div className="flex-shrink-0">
             <div className="relative">
               {/* Dr. Nicotine Image */}
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-cyber-fuchsia scanline-overlay bg-military-metal">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-cyber-fuchsia scanline-overlay bg-military-metal">
                 <img 
                   src="/lovable-uploads/dfa1d651-611f-49ea-b66c-8527e45a1cd6.png"
                   alt="Dr. Nicotine - Médico de Combate"
@@ -50,16 +50,16 @@ const CombatMedic = ({ mode, message, showCharacter = true }: CombatMedicProps) 
         )}
 
         <div className="flex-1">
-          <div className="flex items-center space-x-2 mb-2">
-            <span className="text-cyber-cyan font-bebas text-sm tracking-wider">
+          <div className="flex items-center space-x-2 mb-3">
+            <span className="text-cyber-cyan font-bebas text-lg tracking-wider">
               DR. NICOTINE
             </span>
-            <span className="text-military-metal text-xs">
+            <span className="text-military-metal text-sm">
               // MÉDICO DE COMBATE
             </span>
           </div>
           
-          <div className="font-consolas text-sm leading-relaxed">
+          <div className="font-consolas text-base leading-relaxed">
             {message}
           </div>
         </div>
