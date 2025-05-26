@@ -2,8 +2,75 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RewardPreview } from "@/components/RewardPreview";
+import { useUserProgress } from "@/hooks/useUserProgress";
+import { Badge as BadgeType } from "@/types/user";
 
 const TestPanel = () => {
+  const { progress } = useUserProgress();
+
+  // Define badges for each test
+  const testBadges: Record<string, BadgeType> = {
+    "career-truth-ai": {
+      id: 'career-warrior',
+      name: 'Guerreiro da Carreira',
+      description: 'Completou o CareerTruthAI',
+      icon: '💼',
+      category: 'completion',
+      rarity: 'rare',
+      points: 300
+    },
+    "arquiteto-da-verdade": {
+      id: 'truth-seeker',
+      name: 'Caçador da Verdade', 
+      description: 'Completou o Arquiteto da Verdade',
+      icon: '🏗️',
+      category: 'completion',
+      rarity: 'rare',
+      points: 300
+    },
+    "unbreakable-mind": {
+      id: 'unbreakable',
+      name: 'Mente Inquebrantável',
+      description: 'Completou o Unbreakable Mind',
+      icon: '⚡',
+      category: 'intensity',
+      rarity: 'epic',
+      points: 500
+    }
+  };
+
+  // Special badges that can be unlocked
+  const specialBadges: BadgeType[] = [
+    {
+      id: 'first-test',
+      name: 'Primeira Batalha',
+      description: 'Primeiro teste completado',
+      icon: '🎯',
+      category: 'completion',
+      rarity: 'common',
+      points: 100
+    },
+    {
+      id: 'honest-soul',
+      name: 'Alma Honesta',
+      description: 'Score de honestidade 8.0+',
+      icon: '💎',
+      category: 'honesty',
+      rarity: 'epic',
+      points: 400
+    },
+    {
+      id: 'legend',
+      name: 'Lenda do Desconforto',
+      description: 'Todos os testes completados',
+      icon: '👑',
+      category: 'special',
+      rarity: 'legendary',
+      points: 1000
+    }
+  ];
+
   const tests = [
     {
       id: "career-truth-ai",
@@ -11,7 +78,8 @@ const TestPanel = () => {
       description: "Autópsia brutal da sua carreira. Descubra seus sabotadores internos e receba um plano de 30-60-90 dias sem açúcar.",
       difficulty: "BRUTAL",
       status: "Disponível",
-      link: "/career-truth-ai"
+      link: "/career-truth-ai",
+      xpReward: 300
     },
     {
       id: "arquiteto-da-verdade",
@@ -19,7 +87,8 @@ const TestPanel = () => {
       description: "Desconstrua suas mentiras internas e projete uma nova identidade baseada em verdade, propósito e responsabilidade.",
       difficulty: "INTENSO",
       status: "Disponível",
-      link: "/arquiteto-da-verdade"
+      link: "/arquiteto-da-verdade",
+      xpReward: 300
     },
     {
       id: "unbreakable-mind",
@@ -27,7 +96,8 @@ const TestPanel = () => {
       description: "Mentalidade David Goggins. Destrua suas desculpas mentais e forje disciplina de aço. Sem vitimismo permitido.",
       difficulty: "EXTREMO",
       status: "Disponível",
-      link: "/unbreakable-mind"
+      link: "/unbreakable-mind",
+      xpReward: 500
     },
     {
       id: "stay-hard-ai",
@@ -35,7 +105,8 @@ const TestPanel = () => {
       description: "Coaching estilo Goggins. Sem desculpas: diga sua meta de treino e aceite o castigo.",
       difficulty: "EXTREMO",
       status: "Em breve",
-      link: "#"
+      link: "#",
+      xpReward: 500
     },
     {
       id: "stoic-snap",
@@ -43,7 +114,8 @@ const TestPanel = () => {
       description: "Conselheiro estoico on-demand. Em 3 frases, o remédio de Sêneca para seu problema.",
       difficulty: "INTENSO",
       status: "Em breve",
-      link: "#"
+      link: "#",
+      xpReward: 250
     },
     {
       id: "cold-email-crucible",
@@ -51,7 +123,8 @@ const TestPanel = () => {
       description: "Autópsia brutal da sua copy. Cole sua linha de assunto: receba tapas & melhorias.",
       difficulty: "SEVERO",
       status: "Em breve",
-      link: "#"
+      link: "#",
+      xpReward: 200
     },
     {
       id: "4am-challenge",
@@ -59,7 +132,8 @@ const TestPanel = () => {
       description: "Teste de disciplina extrema. Acorde às 4h por 30 dias. Monitore falhas e receba feedback implacável.",
       difficulty: "INSANO",
       status: "Em desenvolvimento",
-      link: "#"
+      link: "#",
+      xpReward: 1000
     },
     {
       id: "comfort-killer",
@@ -67,7 +141,8 @@ const TestPanel = () => {
       description: "Identifique e elimine suas fugas. AI que monitora seus padrões de procrastinação e cobra resultados.",
       difficulty: "BRUTAL",
       status: "Em desenvolvimento",
-      link: "#"
+      link: "#",
+      xpReward: 400
     }
   ];
 
@@ -99,6 +174,34 @@ const TestPanel = () => {
       default:
         return "bg-gray-500 text-white";
     }
+  };
+
+  const isTestCompleted = (testId: string) => {
+    return progress.testsCompleted.some(test => test.testId === testId);
+  };
+
+  const getRelevantSpecialBadges = (testId: string) => {
+    const completedTests = progress.testsCompleted.length;
+    const relevant: BadgeType[] = [];
+
+    if (completedTests === 0) {
+      relevant.push(specialBadges[0]); // First test badge
+    }
+
+    if (progress.honestyAverage < 8.0) {
+      relevant.push(specialBadges[1]); // Honest soul badge
+    }
+
+    // Legend badge if this completes all tests
+    const availableTestIds = ["career-truth-ai", "arquiteto-da-verdade", "unbreakable-mind"];
+    const completedTestIds = progress.testsCompleted.map(t => t.testId);
+    const remainingTests = availableTestIds.filter(id => !completedTestIds.includes(id));
+    
+    if (remainingTests.length === 1 && remainingTests[0] === testId) {
+      relevant.push(specialBadges[2]); // Legend badge
+    }
+
+    return relevant;
   };
 
   return (
@@ -148,19 +251,33 @@ const TestPanel = () => {
                 <CardDescription className="text-warm-gray/70 font-inter mb-6 min-h-[60px]">
                   {test.description}
                 </CardDescription>
+
+                {/* Show rewards for available tests */}
+                {test.status === "Disponível" && testBadges[test.id] && (
+                  <RewardPreview
+                    xpReward={test.xpReward}
+                    testBadge={testBadges[test.id]}
+                    specialBadges={getRelevantSpecialBadges(test.id)}
+                    isCompleted={isTestCompleted(test.id)}
+                  />
+                )}
                 
                 {test.status === "Disponível" ? (
                   <Link to={test.link}>
                     <Button 
-                      className="w-full bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90 font-bebas tracking-wider"
+                      className={`w-full font-bebas tracking-wider mt-4 ${
+                        isTestCompleted(test.id) 
+                          ? "bg-green-600 hover:bg-green-700" 
+                          : "bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90"
+                      }`}
                     >
-                      INICIAR TESTE
+                      {isTestCompleted(test.id) ? "REFAZER TESTE" : "INICIAR TESTE"}
                     </Button>
                   </Link>
                 ) : (
                   <Button 
                     disabled 
-                    className="w-full font-bebas tracking-wider"
+                    className="w-full font-bebas tracking-wider mt-4"
                     variant="outline"
                   >
                     {test.status.toUpperCase()}
