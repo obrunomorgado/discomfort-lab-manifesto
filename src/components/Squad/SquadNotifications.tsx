@@ -3,13 +3,16 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import { useSquad } from '@/hooks/useSquad';
-import { Bell, CheckCircle, AlertTriangle, Users, UserX } from 'lucide-react';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { Bell, CheckCircle, AlertTriangle, Users, UserX, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 const SquadNotifications = () => {
   const { notifications, markNotificationAsRead, unreadNotifications } = useSquad();
+  const { playSound } = useSoundEffects();
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -44,18 +47,40 @@ const SquadNotifications = () => {
     }
   };
 
+  const handleMarkAsRead = (notificationId: string) => {
+    markNotificationAsRead(notificationId);
+    playSound('button_click');
+  };
+
+  const markAllAsRead = () => {
+    notifications.filter(n => !n.isRead).forEach(n => markNotificationAsRead(n.id));
+    playSound('squad_notification');
+  };
+
   if (notifications.length === 0) return null;
 
   return (
     <Card className="bg-military-card border-cyber-fuchsia/30 rivet-border">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2 font-bebas text-cyber-fuchsia">
-          <Bell size={20} />
-          <span>NOTIFICAÇÕES DO SQUAD</span>
+        <CardTitle className="flex items-center justify-between font-bebas text-cyber-fuchsia">
+          <div className="flex items-center space-x-2">
+            <Bell size={20} />
+            <span>NOTIFICAÇÕES DO SQUAD</span>
+            {unreadNotifications > 0 && (
+              <Badge className="bg-cyber-warning text-military-bg px-2 py-1 rounded text-xs animate-pulse">
+                {unreadNotifications}
+              </Badge>
+            )}
+          </div>
           {unreadNotifications > 0 && (
-            <span className="bg-cyber-warning text-military-bg px-2 py-1 rounded text-xs">
-              {unreadNotifications}
-            </span>
+            <Button
+              onClick={markAllAsRead}
+              size="sm"
+              variant="ghost"
+              className="text-cyber-cyan hover:bg-cyber-cyan/20 text-xs"
+            >
+              Ler Todas
+            </Button>
           )}
         </CardTitle>
       </CardHeader>
@@ -72,7 +97,7 @@ const SquadNotifications = () => {
                 <div className="flex items-start space-x-3">
                   {getNotificationIcon(notification.type)}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-warm-gray font-consolas">
+                    <p className={`text-sm font-consolas ${!notification.isRead ? 'text-warm-gray font-bold' : 'text-warm-gray/80'}`}>
                       {notification.message}
                     </p>
                     <p className="text-xs text-warm-gray/60 mt-1">
@@ -81,10 +106,10 @@ const SquadNotifications = () => {
                   </div>
                   {!notification.isRead && (
                     <Button
-                      onClick={() => markNotificationAsRead(notification.id)}
+                      onClick={() => handleMarkAsRead(notification.id)}
                       size="sm"
                       variant="ghost"
-                      className="text-cyber-fuchsia hover:bg-cyber-fuchsia/20"
+                      className="text-cyber-fuchsia hover:bg-cyber-fuchsia/20 p-1"
                     >
                       <CheckCircle size={14} />
                     </Button>

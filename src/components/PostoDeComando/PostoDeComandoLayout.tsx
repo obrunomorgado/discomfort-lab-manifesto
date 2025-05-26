@@ -86,9 +86,20 @@ const PostoDeComandoLayout = ({
 
             <IntelSection progress={progress} stats={stats} />
             
-            <div className="grid md:grid-cols-2 gap-6">
-              <SquadManagement />
-              {userSquad && <SquadNotifications />}
+            {/* Squad Section - Now prominently displayed */}
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <SquadManagement />
+                {userSquad && <SquadNotifications />}
+              </div>
+              
+              {/* Show HonorLog and PotLink when user has a squad */}
+              {userSquad && (
+                <div className="grid md:grid-cols-2 gap-6">
+                  <HonorLog />
+                  <PotLink />
+                </div>
+              )}
             </div>
 
             <QuickActions
@@ -104,13 +115,14 @@ const PostoDeComandoLayout = ({
 
           <div className="space-y-6">
             <RecruitData progress={progress} />
-            <PotLink />
-            {userSquad && <HonorLog />}
+            {/* Move standalone PotLink here if user doesn't have squad */}
+            {!userSquad && <PotLink />}
             <OperationHistory progress={progress} />
             <OperationSchedule progress={progress} pendingActions={pendingActions} />
           </div>
         </div>
 
+        {/* Squad Chat - Always available when user has a squad */}
         {userSquad && (
           <SquadChat 
             squadId={userSquad.id}

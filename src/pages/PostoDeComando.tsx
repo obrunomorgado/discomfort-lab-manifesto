@@ -3,6 +3,7 @@ import React from 'react';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePenaltyContract } from '@/hooks/usePenaltyContract';
 import { useSquad } from '@/hooks/useSquad';
+import { useSquadIntegration } from '@/hooks/useSquadIntegration';
 import { useMissionHandlers } from '@/hooks/useMissionHandlers';
 import { useModalStates } from '@/hooks/useModalStates';
 import PostoDeComandoLayout from '@/components/PostoDeComando/PostoDeComandoLayout';
@@ -12,6 +13,7 @@ const PostoDeComando = () => {
   const { progress, getStats, getPendingActions } = useUserProgress();
   const { activeContract } = usePenaltyContract();
   const { getSquadByUserId } = useSquad();
+  const { userSquad, handleMissionStart, handleMissionSuccess, handleMissionFailure } = useSquadIntegration();
   const {
     handleMissionSelect,
     handleMissionReport,
@@ -38,11 +40,23 @@ const PostoDeComando = () => {
   
   const stats = getStats();
   const pendingActions = getPendingActions();
-  const userSquad = getSquadByUserId('current-user');
 
-  const handleMissionSelectWithClose = (mission: any, isDoubled: boolean) => {
+  const handleMissionSelectWithSquad = (mission: any, isDoubled: boolean) => {
     handleMissionSelect(mission, isDoubled);
+    handleMissionStart(mission);
     setShowMissionSelector(false);
+  };
+
+  const handleMissionReportWithSquad = (success: boolean, mission: any) => {
+    const result = handleMissionReport(success, mission);
+    
+    if (success) {
+      handleMissionSuccess(mission);
+    } else {
+      handleMissionFailure(mission);
+    }
+    
+    return result;
   };
 
   return (
@@ -55,7 +69,7 @@ const PostoDeComando = () => {
         activeContract={activeContract}
         showSquadChat={showSquadChat}
         setShowSquadChat={setShowSquadChat}
-        onMissionSelect={handleMissionSelectWithClose}
+        onMissionSelect={handleMissionSelectWithSquad}
         onShowDailyReport={() => setShowDailyReport(true)}
         onShowMissionSelector={() => setShowMissionSelector(true)}
         onShowBettingMachine={() => setShowBettingMachine(true)}
@@ -75,7 +89,7 @@ const PostoDeComando = () => {
         setShowDiscomfortCard={setShowDiscomfortCard}
         showBettingMachine={showBettingMachine}
         setShowBettingMachine={setShowBettingMachine}
-        onMissionReport={handleMissionReport}
+        onMissionReport={handleMissionReportWithSquad}
         onDiscomfortAccept={handleDiscomfortAccept}
         onBettingSelect={handleBettingSelect}
       />
