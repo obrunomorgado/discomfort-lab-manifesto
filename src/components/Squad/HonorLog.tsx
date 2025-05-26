@@ -27,12 +27,12 @@ const HonorLog = () => {
         timestamp: mission.completedAt || new Date(),
         isDoubled: mission.isDoubled
       })),
-    ...progress.activeBadges.map(badge => ({
+    ...progress.badges.map(badge => ({
       id: `badge-${badge.id}`,
       type: 'badge',
       title: `Badge Conquistado: ${badge.name}`,
       points: 0,
-      timestamp: new Date(), // Would be better to track when badge was earned
+      timestamp: badge.unlockedAt || new Date(),
       description: badge.description
     }))
   ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10);
@@ -130,6 +130,28 @@ const HonorLog = () => {
       </CardContent>
     </Card>
   );
+
+  function getAchievementIcon(type: string) {
+    switch (type) {
+      case 'mission':
+        return <Target size={16} className="text-cyber-cyan" />;
+      case 'badge':
+        return <Trophy size={16} className="text-cyber-warning" />;
+      default:
+        return <Zap size={16} className="text-cyber-fuchsia" />;
+    }
+  }
+
+  function getAchievementColor(type: string) {
+    switch (type) {
+      case 'mission':
+        return 'border-cyber-cyan/30 bg-cyber-cyan/10';
+      case 'badge':
+        return 'border-cyber-warning/30 bg-cyber-warning/10';
+      default:
+        return 'border-cyber-fuchsia/30 bg-cyber-fuchsia/10';
+    }
+  }
 };
 
 export default HonorLog;
