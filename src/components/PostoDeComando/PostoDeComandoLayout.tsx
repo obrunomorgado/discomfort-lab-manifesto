@@ -15,7 +15,6 @@ import RecruitData from '@/components/PostoDeComando/RecruitData';
 import OperationHistory from '@/components/PostoDeComando/OperationHistory';
 import SquadChat from '@/components/Squad/SquadChat';
 import { useNativeFeatures } from '@/hooks/useNativeFeatures';
-import { ImpactStyle } from "@capacitor/haptics";
 
 interface PostoDeComandoLayoutProps {
   progress: UserProgress;
@@ -55,7 +54,7 @@ const PostoDeComandoLayout = ({
   const { triggerHaptic } = useNativeFeatures();
 
   const handleRefresh = async () => {
-    await triggerHaptic(ImpactStyle.Light);
+    await triggerHaptic();
     onRefresh?.();
   };
 

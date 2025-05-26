@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Brain, Users, User, Zap } from "lucide-react";
 import { useNativeFeatures } from "@/hooks/useNativeFeatures";
-import { ImpactStyle } from "@capacitor/haptics";
 import { cn } from "@/lib/utils";
 
 export const MobileNavigation = () => {
@@ -46,7 +45,7 @@ export const MobileNavigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const handleNavClick = async () => {
-    await triggerHaptic(ImpactStyle.Light);
+    await triggerHaptic();
   };
 
   return (

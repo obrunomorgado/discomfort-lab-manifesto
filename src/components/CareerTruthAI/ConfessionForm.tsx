@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { MobileTextarea } from "@/components/ui/mobile-textarea";
 import { Clock } from "lucide-react";
 import { useNativeFeatures } from "@/hooks/useNativeFeatures";
-import { ImpactStyle } from "@capacitor/haptics";
 
 interface ConfessionFormProps {
   userInput: string;
@@ -24,7 +23,7 @@ const ConfessionForm = ({
   const { triggerHaptic } = useNativeFeatures();
 
   const handleSubmit = async () => {
-    await triggerHaptic(ImpactStyle.Medium);
+    await triggerHaptic();
     onSubmit();
   };
 
