@@ -1,4 +1,3 @@
-
 import { DatabasePenaltyContract, DatabasePenaltyLog } from './types';
 import { DatabaseStorage } from './storage';
 import { PenaltyContract, PenaltyLog } from '@/types/penalty';
@@ -87,8 +86,17 @@ export const createPenaltyLog = async (logData: Omit<PenaltyLog, 'id' | 'charged
   const dbLog: DatabasePenaltyLog = {
     id: 'log_' + Date.now(),
     charged_at: new Date().toISOString(),
-    confirmed_at: typeof logData.confirmed_at === 'string' ? logData.confirmed_at : logData.confirmed_at?.toISOString(),
-    ...logData
+    confirmed_at: logData.confirmed_at 
+      ? (typeof logData.confirmed_at === 'string' ? logData.confirmed_at : logData.confirmed_at.toISOString())
+      : undefined,
+    contract_id: logData.contract_id,
+    user_id: logData.user_id,
+    amount_charged: logData.amount_charged,
+    currency: logData.currency,
+    destination_type: logData.destination_type,
+    stripe_payment_intent_id: logData.stripe_payment_intent_id,
+    status: logData.status,
+    reason: logData.reason
   };
   
   const logs = DatabaseStorage.get<DatabasePenaltyLog>('penalty_logs');
