@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useUserProgress } from "@/hooks/useUserProgress";
@@ -8,6 +7,7 @@ import TreatmentStatus from "@/components/CareerTruthAI/TreatmentStatus";
 import CheckInSection from "@/components/CareerTruthAI/CheckInSection";
 import ConfessionForm from "@/components/CareerTruthAI/ConfessionForm";
 import DiagnosisResults from "@/components/CareerTruthAI/DiagnosisResults";
+import CalendarSync from "@/components/CareerTruthAI/CalendarSync";
 
 const CareerTruthAI = () => {
   const [userInput, setUserInput] = useState("");
@@ -183,7 +183,9 @@ ${dailyActions.map((action, index) =>
           onActionComplete={handleActionComplete}
         />
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <CalendarSync progress={progress} pendingActions={pendingActions} />
+
+        <div className="grid lg:grid-cols-2 gap-8 mt-8">
           <ConfessionForm
             userInput={userInput}
             setUserInput={setUserInput}
