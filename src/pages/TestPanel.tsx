@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RewardPreview } from "@/components/RewardPreview";
 import { useUserProgress } from "@/hooks/useUserProgress";
+import { useCredits } from "@/hooks/useCredits";
 import { Badge as BadgeType } from "@/types/user";
+import { Coins } from "lucide-react";
 
 const TestPanel = () => {
   const { progress } = useUserProgress();
+  const { getTestCost } = useCredits();
 
   // Define badges for each test
   const testBadges: Record<string, BadgeType> = {
@@ -79,7 +82,8 @@ const TestPanel = () => {
       difficulty: "BRUTAL",
       status: "Disponível",
       link: "/career-truth-ai",
-      xpReward: 300
+      xpReward: 300,
+      credits: getTestCost("career-truth-ai")
     },
     {
       id: "arquiteto-da-verdade",
@@ -88,7 +92,8 @@ const TestPanel = () => {
       difficulty: "INTENSO",
       status: "Disponível",
       link: "/arquiteto-da-verdade",
-      xpReward: 300
+      xpReward: 300,
+      credits: getTestCost("arquiteto-da-verdade")
     },
     {
       id: "unbreakable-mind",
@@ -97,7 +102,8 @@ const TestPanel = () => {
       difficulty: "EXTREMO",
       status: "Disponível",
       link: "/unbreakable-mind",
-      xpReward: 500
+      xpReward: 500,
+      credits: getTestCost("unbreakable-mind")
     },
     {
       id: "stay-hard-ai",
@@ -218,6 +224,17 @@ const TestPanel = () => {
           </p>
         </div>
 
+        {/* Credit Status */}
+        <div className="bg-warm-yellow/10 border border-warm-yellow p-6 rounded-lg mb-12 text-center">
+          <h2 className="text-2xl font-bebas text-warm-yellow mb-2 flex items-center justify-center space-x-2">
+            <Coins size={24} />
+            <span>SEUS CRÉDITOS: {progress.credits}</span>
+          </h2>
+          <p className="text-warm-gray/80 font-inter">
+            Cada teste consome créditos. Invista em sua transformação.
+          </p>
+        </div>
+
         {/* Treatment Status Warning */}
         {progress.isInTreatment && (
           <div className="bg-red-600/10 border border-red-600 p-6 rounded-lg mb-12 text-center">
@@ -266,6 +283,16 @@ const TestPanel = () => {
                 <CardTitle className="text-2xl font-bebas text-warm-gray">
                   {test.title}
                 </CardTitle>
+                
+                {/* Credit Cost */}
+                {test.credits && test.status === "Disponível" && (
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Coins size={16} className="text-warm-yellow" />
+                    <span className="text-warm-yellow font-bebas text-lg">
+                      {test.credits} CRÉDITOS
+                    </span>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-warm-gray/70 font-inter mb-6 min-h-[60px]">
@@ -283,17 +310,35 @@ const TestPanel = () => {
                 )}
                 
                 {test.status === "Disponível" ? (
-                  <Link to={test.link}>
-                    <Button 
-                      className={`w-full font-bebas tracking-wider mt-4 ${
-                        isTestCompleted(test.id) 
-                          ? "bg-green-600 hover:bg-green-700" 
-                          : "bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90"
-                      }`}
-                    >
-                      {isTestCompleted(test.id) ? "REFAZER TESTE" : "INICIAR TESTE"}
-                    </Button>
-                  </Link>
+                  <div className="space-y-2">
+                    {/* Credit validation */}
+                    {test.credits && progress.credits < test.credits && (
+                      <div className="text-center p-2 bg-red-600/10 rounded border border-red-600/30">
+                        <p className="text-red-400 text-sm font-inter">
+                          Créditos insuficientes
+                        </p>
+                      </div>
+                    )}
+                    
+                    <Link to={test.link}>
+                      <Button 
+                        className={`w-full font-bebas tracking-wider ${
+                          isTestCompleted(test.id) 
+                            ? "bg-green-600 hover:bg-green-700" 
+                            : test.credits && progress.credits < test.credits
+                              ? "bg-gray-600 hover:bg-gray-700 opacity-75"
+                              : "bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90"
+                        }`}
+                      >
+                        {isTestCompleted(test.id) 
+                          ? "REFAZER TESTE" 
+                          : test.credits && progress.credits < test.credits
+                            ? "CRÉDITOS INSUFICIENTES"
+                            : "INICIAR TESTE"
+                        }
+                      </Button>
+                    </Link>
+                  </div>
                 ) : (
                   <Button 
                     disabled 
@@ -314,14 +359,22 @@ const TestPanel = () => {
             NÃO SABE POR ONDE COMEÇAR?
           </h2>
           <p className="text-warm-gray/60 font-inter mb-6">
-            Recomendamos começar pelo Sem Desculpas IA. É o teste mais revelador para identificar como você sabota sua própria carreira.
+            Recomendamos começar pelo Arquiteto da Verdade (3 créditos). É o teste mais acessível para começar sua jornada.
           </p>
-          <Link to="/career-truth-ai">
+          <Link to="/arquiteto-da-verdade">
             <Button 
               size="lg" 
-              className="bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90 font-bebas text-xl px-8 py-6 tracking-wider"
+              className={`font-bebas text-xl px-8 py-6 tracking-wider ${
+                progress.credits >= 3 
+                  ? "bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90"
+                  : "bg-gray-600 hover:bg-gray-700"
+              }`}
+              disabled={progress.credits < 3}
             >
-              COMEÇAR COM SEM DESCULPAS IA
+              {progress.credits >= 3 
+                ? "COMEÇAR COM ARQUITETO DA VERDADE" 
+                : "COMPRE CRÉDITOS PARA COMEÇAR"
+              }
             </Button>
           </Link>
         </div>

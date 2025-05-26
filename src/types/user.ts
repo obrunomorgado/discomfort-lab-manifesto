@@ -4,10 +4,36 @@ export interface Badge {
   name: string;
   description: string;
   icon: string;
-  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery';
+  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   unlockedAt?: Date;
   points: number;
+}
+
+export interface CreditTransaction {
+  id: string;
+  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus';
+  amount: number;
+  description: string;
+  timestamp: Date;
+  testId?: string;
+  referralCode?: string;
+}
+
+export interface CreditPackage {
+  id: string;
+  name: string;
+  credits: number;
+  price: number;
+  discount?: number;
+  popular?: boolean;
+}
+
+export interface ReferralSystem {
+  myCode: string;
+  referralsCount: number;
+  totalEarned: number;
+  referredUsers: string[];
 }
 
 export interface DailyAction {
@@ -27,29 +53,34 @@ export interface TestResult {
   honestyScore: number;
   actionItems: string[];
   pointsEarned: number;
-  debtPointsGenerated?: number; // Pontos negativos gerados
-  dailyActionsAssigned?: DailyAction[]; // Ações atribuídas
+  creditsSpent: number; // Nova propriedade
+  debtPointsGenerated?: number;
+  dailyActionsAssigned?: DailyAction[];
 }
 
 export interface UserProgress {
   totalPoints: number;
-  debtPoints: number; // Pontos negativos acumulados
+  credits: number; // Nova propriedade
+  debtPoints: number;
   level: number;
   badges: Badge[];
   testsCompleted: TestResult[];
   streakDays: number;
-  checkInStreak: number; // Dias consecutivos de check-in
+  checkInStreak: number;
   lastActivity: Date;
   lastCheckIn?: Date;
   honestyAverage: number;
-  isInTreatment: boolean; // Se está em programa ativo de recuperação
-  dailyActions: DailyAction[]; // Ações pendentes
+  isInTreatment: boolean;
+  dailyActions: DailyAction[];
   treatmentStartDate?: Date;
+  creditTransactions: CreditTransaction[]; // Nova propriedade
+  referralSystem: ReferralSystem; // Nova propriedade
 }
 
 export interface UserStats {
   testsCompleted: number;
   totalPoints: number;
+  credits: number; // Nova propriedade
   debtPoints: number;
   badgesEarned: number;
   currentStreak: number;

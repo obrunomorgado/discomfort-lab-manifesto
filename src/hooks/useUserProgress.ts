@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { UserProgress, TestResult, Badge, DailyAction } from '@/types/user';
+import { UserProgress, TestResult, Badge, DailyAction, CreditTransaction } from '@/types/user';
 
 const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
   {
@@ -97,6 +96,7 @@ const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
 
 const INITIAL_PROGRESS: UserProgress = {
   totalPoints: 0,
+  credits: 15, // Começar com 15 créditos grátis
   debtPoints: 0,
   level: 1,
   badges: [],
@@ -106,7 +106,14 @@ const INITIAL_PROGRESS: UserProgress = {
   lastActivity: new Date(),
   honestyAverage: 0,
   isInTreatment: false,
-  dailyActions: []
+  dailyActions: [],
+  creditTransactions: [],
+  referralSystem: {
+    myCode: '',
+    referralsCount: 0,
+    totalEarned: 0,
+    referredUsers: []
+  }
 };
 
 export const useUserProgress = () => {
@@ -136,8 +143,34 @@ export const useUserProgress = () => {
         dailyActions: (parsed.dailyActions || []).map((action: any) => ({
           ...action,
           dueDate: new Date(action.dueDate)
-        }))
+        })),
+        creditTransactions: (parsed.creditTransactions || []).map((transaction: any) => ({
+          ...transaction,
+          timestamp: new Date(transaction.timestamp)
+        })),
+        // Gerar código de referral se não existir
+        referralSystem: {
+          myCode: parsed.referralSystem?.myCode || `VERDADE2024${Math.random().toString(36).substring(2, 5).toUpperCase()}`,
+          referralsCount: parsed.referralSystem?.referralsCount || 0,
+          totalEarned: parsed.referralSystem?.totalEarned || 0,
+          referredUsers: parsed.referralSystem?.referredUsers || []
+        },
+        // Migração: adicionar créditos se não existir
+        credits: parsed.credits !== undefined ? parsed.credits : 15
       });
+    } else {
+      // Primeira vez - gerar código de referral
+      const newProgress = {
+        ...INITIAL_PROGRESS,
+        referralSystem: {
+          myCode: `VERDADE2024${Math.random().toString(36).substring(2, 5).toUpperCase()}`,
+          referralsCount: 0,
+          totalEarned: 0,
+          referredUsers: []
+        }
+      };
+      setProgress(newProgress);
+      localStorage.setItem('userProgress', JSON.stringify(newProgress));
     }
   }, []);
 
@@ -146,9 +179,75 @@ export const useUserProgress = () => {
     localStorage.setItem('userProgress', JSON.stringify(newProgress));
   };
 
+  const addCredits = (amount: number, description: string, type: CreditTransaction['type'] = 'purchase') => {
+    const newProgress = { ...progress };
+    newProgress.credits += amount;
+    
+    const transaction: CreditTransaction = {
+      id: `transaction-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+      type,
+      amount,
+      description,
+      timestamp: new Date()
+    };
+    
+    newProgress.creditTransactions.push(transaction);
+    newProgress.lastActivity = new Date();
+    
+    // Badge de primeiro pagamento
+    if (type === 'purchase' && !newProgress.badges.find(b => b.id === 'first-payment')) {
+      const firstPaymentBadge = {
+        id: 'first-payment',
+        name: 'Primeiro Investimento',
+        description: 'Fez sua primeira compra de créditos',
+        icon: '💳',
+        category: 'payment' as const,
+        rarity: 'common' as const,
+        points: 100,
+        unlockedAt: new Date()
+      };
+      newProgress.badges.push(firstPaymentBadge);
+      newProgress.totalPoints += firstPaymentBadge.points;
+    }
+    
+    saveProgress(newProgress);
+    return transaction;
+  };
+
+  const spendCredits = (amount: number, testId: string, testName: string): boolean => {
+    if (progress.credits < amount) {
+      return false;
+    }
+    
+    const newProgress = { ...progress };
+    newProgress.credits -= amount;
+    
+    const transaction: CreditTransaction = {
+      id: `transaction-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+      type: 'spent',
+      amount: -amount,
+      description: `Teste: ${testName}`,
+      timestamp: new Date(),
+      testId
+    };
+    
+    newProgress.creditTransactions.push(transaction);
+    newProgress.lastActivity = new Date();
+    
+    saveProgress(newProgress);
+    return true;
+  };
+
   const addTestResult = (result: TestResult) => {
     const newProgress = { ...progress };
-    newProgress.testsCompleted.push(result);
+    
+    // Adicionar creditsSpent se não existir
+    const resultWithCredits = {
+      ...result,
+      creditsSpent: result.creditsSpent || 0
+    };
+    
+    newProgress.testsCompleted.push(resultWithCredits);
     newProgress.totalPoints += result.pointsEarned;
     
     // Adicionar pontos negativos se gerados
@@ -303,6 +402,7 @@ export const useUserProgress = () => {
     return {
       testsCompleted: progress.testsCompleted.length,
       totalPoints: progress.totalPoints,
+      credits: progress.credits,
       debtPoints: progress.debtPoints,
       badgesEarned: progress.badges.length,
       currentStreak: progress.streakDays,
@@ -327,6 +427,8 @@ export const useUserProgress = () => {
   return {
     progress,
     addTestResult,
+    addCredits,
+    spendCredits,
     completeAction,
     performDailyCheckIn,
     getStats,
