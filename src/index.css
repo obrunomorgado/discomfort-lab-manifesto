@@ -11,6 +11,13 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Prevent zooming on input focus on iOS */
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Prevent bounce scrolling on iOS */
+  html, body {
+    overscroll-behavior: none;
   }
 }
 
@@ -36,6 +43,19 @@
   .touch-target {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Enhanced touch interactions */
+  .touch-action-none {
+    touch-action: none;
+  }
+  
+  .touch-action-pan-y {
+    touch-action: pan-y;
+  }
+  
+  .touch-action-pan-x {
+    touch-action: pan-x;
   }
 
   /* Card base style */
@@ -96,6 +116,52 @@
     .mobile-full-width {
       @apply w-full mx-0 rounded-lg;
     }
+    
+    /* Improved mobile form elements */
+    input, textarea, select {
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Better button sizes for mobile */
+    button {
+      @apply touch-target;
+    }
+    
+    /* Optimized modal for mobile */
+    .mobile-modal {
+      @apply w-full max-w-none mx-0 rounded-t-2xl rounded-b-none;
+      max-height: 85vh;
+    }
+  }
+
+  /* Smooth scrolling improvements */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Pull-to-refresh styling */
+  .pull-indicator {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Swipe gesture indicators */
+  .swipe-hint {
+    position: relative;
+  }
+  
+  .swipe-hint::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.3;
+    box-shadow: 8px 0 0 currentColor, 16px 0 0 currentColor;
   }
 }
 
@@ -103,4 +169,57 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Mobile-specific utilities */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .user-select-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .backdrop-blur-strong {
+    backdrop-filter: blur(20px);
+  }
+}
+
+/* Keyframes for mobile interactions */
+@keyframes glitch-crt {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px currentColor;
+  }
+  50% { 
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+}
+
+/* Custom scrollbar for mobile */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
