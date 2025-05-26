@@ -15,6 +15,14 @@ const TestPanel = () => {
       link: "/career-truth-ai"
     },
     {
+      id: "unbreakable-mind",
+      title: "Unbreakable Mind Simulator",
+      description: "Mentalidade David Goggins. Destrua suas desculpas mentais e forje disciplina de aço. Sem vitimismo permitido.",
+      difficulty: "EXTREMO",
+      status: "Disponível",
+      link: "/unbreakable-mind"
+    },
+    {
       id: "stay-hard-ai",
       title: "Stay Hard AI",
       description: "Coaching estilo Goggins. Sem desculpas: diga sua meta de treino e aceite o castigo.",
@@ -176,6 +184,36 @@ const TestPanel = () => {
       </div>
     </div>
   );
+
+  function getDifficultyColor(difficulty: string) {
+    switch (difficulty) {
+      case "INSANO":
+        return "bg-red-600 text-white";
+      case "EXTREMO":
+        return "bg-red-500 text-white";
+      case "BRUTAL":
+        return "bg-warm-yellow text-dark-bg";
+      case "SEVERO":
+        return "bg-orange-500 text-white";
+      case "INTENSO":
+        return "bg-yellow-600 text-white";
+      default:
+        return "bg-gray-500 text-white";
+    }
+  }
+
+  function getStatusColor(status: string) {
+    switch (status) {
+      case "Disponível":
+        return "bg-green-600 text-white";
+      case "Em breve":
+        return "bg-blue-600 text-white";
+      case "Em desenvolvimento":
+        return "bg-purple-600 text-white";
+      default:
+        return "bg-gray-500 text-white";
+    }
+  }
 };
 
 export default TestPanel;
