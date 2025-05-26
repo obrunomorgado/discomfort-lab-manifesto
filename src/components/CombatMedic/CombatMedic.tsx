@@ -19,17 +19,6 @@ const CombatMedic = ({ mode, message, showCharacter = true }: CombatMedicProps) 
     }
   };
 
-  const getCharacterIcon = () => {
-    switch (mode) {
-      case 'alert':
-        return '🩸';
-      case 'praise':
-        return '⚕️';
-      default:
-        return '🚬';
-    }
-  };
-
   return (
     <div className={`dr-nicotine-dialogue ${getModeStyles()} relative overflow-hidden`}>
       {/* Smoke overlay animation */}
@@ -43,9 +32,13 @@ const CombatMedic = ({ mode, message, showCharacter = true }: CombatMedicProps) 
         {showCharacter && (
           <div className="flex-shrink-0">
             <div className="relative">
-              {/* Character representation */}
-              <div className="w-12 h-12 bg-military-metal rounded-full flex items-center justify-center border-2 border-cyber-fuchsia scanline-overlay">
-                <span className="text-xl">{getCharacterIcon()}</span>
+              {/* Dr. Nicotine Image */}
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-cyber-fuchsia scanline-overlay bg-military-metal">
+                <img 
+                  src="/lovable-uploads/dfa1d651-611f-49ea-b66c-8527e45a1cd6.png"
+                  alt="Dr. Nicotine - Médico de Combate"
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
               
               {/* Animated cigarette ember for neutral/default mode */}
