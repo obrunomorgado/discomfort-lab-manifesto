@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { UserProgress } from '@/types/user';
@@ -14,7 +13,7 @@ import {
 } from './useNotifications/schedulers';
 import { sendTestNotification, cancelAllNotifications } from './useNotifications/actions';
 
-export { NotificationSettings };
+export type { NotificationSettings };
 
 export const useNotifications = () => {
   const [isNative, setIsNative] = useState(false);
