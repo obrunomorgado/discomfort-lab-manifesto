@@ -47,13 +47,16 @@ const PostoDeComando = () => {
     setShowMissionSelector(false);
   };
 
-  const handleMissionReportWithSquad = (success: boolean, mission: any) => {
-    const result = handleMissionReport(success, mission);
+  const handleMissionReportWithSquad = (success: boolean) => {
+    const mission = progress.currentMission;
+    const result = handleMissionReport(success);
     
-    if (success) {
-      handleMissionSuccess(mission);
-    } else {
-      handleMissionFailure(mission);
+    if (mission) {
+      if (success) {
+        handleMissionSuccess(mission.selectedMission);
+      } else {
+        handleMissionFailure(mission.selectedMission);
+      }
     }
     
     return result;
