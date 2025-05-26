@@ -218,12 +218,32 @@ const TestPanel = () => {
           </p>
         </div>
 
+        {/* Treatment Status Warning */}
+        {progress.isInTreatment && (
+          <div className="bg-red-600/10 border border-red-600 p-6 rounded-lg mb-12 text-center">
+            <h2 className="text-2xl font-bebas text-red-400 mb-2">🏥 PACIENTE EM TRATAMENTO</h2>
+            <p className="text-warm-gray/80 font-inter mb-4">
+              Você tem <span className="text-red-400 font-bold">{progress.debtPoints} pontos de dívida</span> de autossabotagem. 
+              Complete suas ações diárias para obter alta médica.
+            </p>
+            <div className="bg-dark-bg/50 p-4 rounded">
+              <p className="text-warm-gray/60 font-inter text-sm">
+                ⚕️ Check-in obrigatório | 📈 Sequência atual: {progress.checkInStreak} dias | 
+                🎯 Ações pendentes: {progress.dailyActions.filter(a => !a.completed).length}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Warning Banner */}
         <div className="bg-warm-yellow/10 border border-warm-yellow p-6 rounded-lg mb-12 text-center">
           <h2 className="text-2xl font-bebas text-warm-yellow mb-2">AVISO IMPORTANTE</h2>
           <p className="text-warm-gray/80 font-inter">
             Estes testes não são para todos. Se você busca validação ou palavras doces, 
             este não é o lugar. Aqui você encontrará apenas a verdade nua e crua.
+            <span className="block mt-2 text-red-400 font-bold">
+              ⚠️ Cada teste gera PONTOS NEGATIVOS que devem ser pagos com ações diárias.
+            </span>
           </p>
         </div>
 

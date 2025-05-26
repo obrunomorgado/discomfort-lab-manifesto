@@ -5,168 +5,285 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { useUserProgress } from "@/hooks/useUserProgress";
+import { DailyAction, TestResult } from "@/types/user";
+import { CheckCircle, Clock, AlertTriangle, Calendar } from "lucide-react";
 
 const CareerTruthAI = () => {
   const [userInput, setUserInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState("");
+  const [showCheckIn, setShowCheckIn] = useState(false);
+  const [checkInMessage, setCheckInMessage] = useState("");
+  
+  const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday } = useUserProgress();
+  
+  const pendingActions = getPendingActions();
+  const completedToday = getCompletedActionsToday();
+
+  const generateDailyActions = (): DailyAction[] => {
+    const baseActions = [
+      {
+        id: `action-${Date.now()}-1`,
+        description: "Enviar um email importante que você vem adiando",
+        points: 25,
+        completed: false,
+        dueDate: new Date(),
+        category: 'professional' as const
+      },
+      {
+        id: `action-${Date.now()}-2`, 
+        description: "Falar pelo menos uma vez em uma reunião",
+        points: 30,
+        completed: false,
+        dueDate: new Date(),
+        category: 'communication' as const
+      },
+      {
+        id: `action-${Date.now()}-3`,
+        description: "Completar uma tarefa sem buscar 'perfeição'",
+        points: 35,
+        completed: false,
+        dueDate: new Date(),
+        category: 'behavior' as const
+      },
+      {
+        id: `action-${Date.now()}-4`,
+        description: "Documentar um resultado/conquista profissional",
+        points: 20,
+        completed: false,
+        dueDate: new Date(),
+        category: 'professional' as const
+      },
+      {
+        id: `action-${Date.now()}-5`,
+        description: "Substituir uma desculpa por uma ação concreta",
+        points: 40,
+        completed: false,
+        dueDate: new Date(),
+        category: 'mindset' as const
+      }
+    ];
+
+    return baseActions.slice(0, 3 + Math.floor(Math.random() * 3)); // 3-5 ações
+  };
 
   const handleSubmit = async () => {
     if (!userInput.trim()) return;
     
     setIsAnalyzing(true);
     
-    // Simulate AI analysis with professional self-sabotage focus
     setTimeout(() => {
-      setAnalysis(`💼 **AUTÓPSIA PROFISSIONAL INICIADA...**
+      const debtPoints = Math.floor(Math.random() * 201) + 150; // 150-350 pontos negativos
+      const dailyActions = generateDailyActions();
+      
+      const testResult: TestResult = {
+        testId: 'career-truth-ai',
+        testName: 'Sem Desculpas IA',
+        completedAt: new Date(),
+        keyInsights: [
+          'Padrões de autossabotagem profissional identificados',
+          'Comportamentos autodestrutivos mapeados',
+          'Protocolo de recuperação ativado'
+        ],
+        honestyScore: Math.floor(Math.random() * 3) + 7, // 7-9
+        actionItems: dailyActions.map(action => action.description),
+        pointsEarned: 300,
+        debtPointsGenerated: debtPoints,
+        dailyActionsAssigned: dailyActions
+      };
 
-*Dr. Desculpas, especialista em autossabotagem profissional com 25 anos destruindo carreiras patéticas, ajusta seus óculos e observa os destroços da sua trajetória profissional. O silêncio da sala é quebrado apenas pelo som de contratos sendo rasgados...*
+      addTestResult(testResult);
 
----
+      setAnalysis(`🏥 **DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - EMERGÊNCIA MÉDICA**
 
-**"Impressionante... simplesmente impressionante."** *ele murmura, balançando a cabeça com desprezo.*
-
-**DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - CASO #${Math.floor(Math.random() * 9999)}**
-
-*O Dr. se vira para você com um olhar que perfura sua alma corporativa.*
-
-**"Sabe o que eu vejo aqui? Um profissional que transformou autossabotagem em arte. Deixe-me mostrar suas obras-primas destrutivas..."**
-
----
-
-🚨 **PADRÕES DE AUTOSSABOTAGEM IDENTIFICADOS:**
-
-**SABOTAGEM #1: "Perfeccionismo Paralisante"**
-*"Clássico. Você nunca entrega nada porque 'não está perfeito ainda'. Enquanto isso, outros entregam 80% e sobem na carreira. Você fica com seus 100% que nunca saem da gaveta."*
-
-**SABOTAGEM #2: "Síndrome do Impostor Profissional"**
-*"Você rejeita oportunidades achando que 'não está preparado'. Spoiler: ninguém está 100% preparado. Mas eles aceitam e aprendem. Você fica esperando a preparação perfeita que nunca chega."*
-
-**SABOTAGEM #3: "Evitação de Feedback"**
-*"Você foge de avaliações, reuniões one-on-one e conversas difíceis. Como diabos espera crescer se não sabe onde está errando? Você prefere a ignorância confortável."*
-
-**SABOTAGEM #4: "Procrastinação Estratégica"**
-*"Sempre deixa projetos importantes para última hora, criando drama e stress. Depois reclama que não tem tempo. Você CRIA a própria escassez de tempo."*
+*Dr. Desculpas ajusta os óculos e observa os resultados dos exames. O silêncio da sala é quebrado pelo bipe constante dos monitores...*
 
 ---
 
-*O Dr. Desculpas se levanta e caminha até uma parede coberta de gráficos de carreiras destruídas.*
+**"Paciente... temos um quadro grave aqui."** *ele murmura, balançando a cabeça*
 
-**"Agora, a parte que vai doer de verdade..."**
+**LAUDO MÉDICO - CASO #${Math.floor(Math.random() * 9999)}**
 
-⚡ **O VEREDICTO PROFISSIONAL IMPLACÁVEL:**
+🚨 **DIAGNÓSTICO CONFIRMADO: AUTOSSABOTAGEM PROFISSIONAL CRÔNICA**
 
-*Ele se vira dramaticamente para você.*
+**PONTOS DE DÍVIDA GERADOS: -${debtPoints} pontos**
 
-**"Você está desperdiçando seu potencial profissional alimentando uma coleção premium de comportamentos autodestrutivos. Cada reunião perdida, cada oportunidade rejeitada, cada feedback ignorado é um tijolo na parede que você mesmo constrói para limitar sua carreira."**
+*O Dr. se vira para você com expressão séria.*
 
----
-
-📋 **SEU PROTOCOLO ANTI-SABOTAGEM - OS PRÓXIMOS 90 DIAS:**
-
-*O Dr. pega uma prancheta com logo corporativo e começa a escrever com determinação militar.*
-
-**FASE 1 - DIAS 1-30: "MAPEAMENTO DA DESTRUIÇÃO"**
-- *"Documente TODA vez que você evita uma tarefa importante por 'não estar pronta ainda'."*
-- *"Para cada 'não sei se consigo', liste 3 pessoas que conseguiram com menos experiência que você."*
-- *"Elimine a frase 'quando eu estiver preparado' do seu vocabulário profissional."*
-- *"Aceite uma tarefa que te assusta ESTA SEMANA."*
-
-**FASE 2 - DIAS 31-60: "CONFRONTO DIRETO"**
-- *"Peça feedback brutal para seu chefe. Não aceite respostas vagas."*
-- *"Candidatar-se a UMA vaga que você acha que está 'acima do seu nível'."*
-- *"Fale em uma reunião onde normalmente ficaria calado."*
-- *"Substitua 'eu tentei' por 'eu entreguei' ou 'eu não entreguei'."*
-
-**FASE 3 - DIAS 61-90: "EXECUÇÃO IMPIEDOSA"**
-- *"Você será uma máquina anti-sabotagem profissional."*
-- *"Outros vão notar que você parou de fazer drama e começou a entregar resultados."*
-- *"Sua nova identidade: alguém que executa ao invés de se sabotar."*
-- *"Negocie um aumento ou promoção baseado nos resultados entregues."*
+**"Você acumulou uma dívida de ${debtPoints} pontos de autossabotagem. Cada comportamento destrutivo tem um preço, e agora você vai pagar com AÇÕES."**
 
 ---
 
-💰 **PROTOCOLOS ESPECÍFICOS ANTI-SABOTAGEM:**
+⚡ **PROTOCOLO DE REABILITAÇÃO ATIVADO:**
 
-**PARA REUNIÕES:**
-*"Pare de chegar atrasado, prepare suas falas antecipadamente, e FALE pelo menos uma vez por reunião. Chega de ser o fantasma corporativo."*
+*Dr. Desculpas pega uma prancheta médica e começa a prescrever o tratamento.*
 
-**PARA PROJETOS:**
-*"Entregue na data. Mesmo que seja 80%. Pare de usar 'perfeição' como desculpa para atraso."*
+**"Escute bem: Você está oficialmente em TRATAMENTO. Cada ação que você completar vai reduzir sua dívida. Quando chegar a ZERO, você recebe alta médica."**
 
-**PARA NETWORKING:**
-*"Conecte-se com uma pessoa nova por semana. Chega de 'não sou bom em networking'. Ninguém nasceu sabendo."*
+📋 **SUAS PRESCRIÇÕES DIÁRIAS:**
 
-**PARA PROMOÇÕES:**
-*"Documente seus resultados SEMANALMENTE. Quando surgir uma oportunidade, você terá dados, não achismos."*
+${dailyActions.map((action, index) => 
+  `**${index + 1}.** ${action.description} *(+${action.points} pontos)*`
+).join('\n')}
 
 ---
 
-*O Dr. Desculpas remove os óculos e olha diretamente nos seus olhos corporativos.*
+💊 **INSTRUÇÕES DE TRATAMENTO:**
 
-**"Escute bem: Esta não é coaching motivacional. É uma cirurgia de emergência na sua carreira. Você tem duas opções:"**
+*O médico olha diretamente nos seus olhos.*
 
-🔥 **"Implemente este protocolo e pare de se sabotar HOJE..."**
+**"TODOS OS DIAS você deve fazer check-in aqui. Relatar o que completou. Sem desculpas, sem exceções."**
 
-💀 **"...ou continue sendo um especialista em autossabotagem até se aposentar no mesmo cargo medíocre."**
+🔥 **"Se você falhar por mais de 24h, sua dívida AUMENTA. Se você completar tudo consistentemente, ganha badges de recuperação."**
 
-*Ele estende a mão com um contrato de mudança.*
+⚕️ **"Quando zerar sua dívida, você recebe ALTA MÉDICA e a badge 'Curado da Autossabotagem'."**
 
-**"A escolha é sua. Mas saiba que eu já vi milhares de carreiras. As que implementam o protocolo anti-sabotagem, decolam. As que 'vão pensar no assunto'... bem, continuam se sabotando em meetings infinitos."**
+---
 
-*A sala fica em silêncio. O som do relógio marca cada segundo da sua decisão profissional...*
+*Dr. Desculpas estende a receita médica.*
 
-**"Você vai continuar sendo um artista da autossabotagem ou vai se tornar um executor de resultados?"**
+**"O tratamento começa AGORA. Primeiro check-in deve ser amanhã. Sem exceções."**
 
-*O Dr. Desculpas cruza os braços e espera sua resposta profissional.*
+*O som dos monitores ecoa na sala...*
 
-**"Sua escolha define os próximos 90 dias da sua carreira."**
+**"Você vai se curar da autossabotagem ou vai continuar sendo um paciente crônico?"**
       `);
       setIsAnalyzing(false);
+      setShowCheckIn(true);
     }, 4000);
+  };
+
+  const handleActionComplete = (actionId: string) => {
+    const isRecovered = completeAction(actionId);
+    if (isRecovered) {
+      setCheckInMessage("🏥 ALTA MÉDICA CONCEDIDA! Você zerou sua dívida de autossabotagem!");
+    }
+  };
+
+  const handleDailyCheckIn = () => {
+    const newBadges = performDailyCheckIn();
+    setCheckInMessage(`✅ Check-in realizado! ${newBadges.length > 0 ? `Novas badges: ${newBadges.map(b => b.name).join(', ')}` : ''}`);
+  };
+
+  const getProgressPercentage = () => {
+    if (progress.debtPoints === 0) return 100;
+    const totalDebt = progress.testsCompleted
+      .filter(t => t.debtPointsGenerated)
+      .reduce((sum, t) => sum + (t.debtPointsGenerated || 0), 0);
+    return totalDebt > 0 ? ((totalDebt - progress.debtPoints) / totalDebt) * 100 : 0;
   };
 
   return (
     <div className="min-h-screen py-16 px-4 bg-gradient-to-b from-dark-bg to-dark-bg/90">
       <div className="max-w-4xl mx-auto">
-        {/* Professional Header */}
+        {/* Header */}
         <div className="text-center mb-12 relative">
           <div className="absolute inset-0 bg-warm-yellow/5 blur-3xl rounded-full"></div>
           <Badge className="bg-red-600 text-white font-bebas mb-4 relative z-10 animate-pulse">
-            AUTÓPSIA PROFISSIONAL
+            {progress.isInTreatment ? "EM TRATAMENTO MÉDICO" : "AUTÓPSIA PROFISSIONAL"}
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bebas text-warm-gray mb-6 tracking-wider relative z-10">
             SEM<span className="text-warm-yellow">DESCULPAS</span>IA
           </h1>
           <div className="relative z-10 max-w-3xl mx-auto">
             <p className="text-xl text-warm-gray/80 font-inter mb-4 italic">
-              "Uma sala corporativa fria. Uma mesa de aço. Um especialista em autossabotagem profissional 
-              ajusta suas luvas e analisa os destroços da sua carreira..."
+              "Uma sala médica fria. Dr. Desculpas ajusta o estetoscópio e analisa os sintomas da sua autossabotagem profissional..."
             </p>
             <p className="text-lg text-warm-gray/60 font-inter">
-              <strong className="text-warm-yellow">"Pronto para descobrir como você sabota sua própria carreira?"</strong>
+              <strong className="text-warm-yellow">"Pronto para o diagnóstico da sua disfunção profissional?"</strong>
             </p>
           </div>
         </div>
 
-        {/* Professional Warning */}
-        <Alert className="bg-red-600/10 border-red-600/30 mb-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600/5 to-transparent"></div>
-          <AlertDescription className="text-warm-gray font-inter relative z-10">
-            <div className="flex items-start space-x-3">
-              <span className="text-2xl">⚠️</span>
-              <div>
-                <strong className="text-red-400">O Dr. Desculpas adverte:</strong>
-                <p className="mt-1">
-                  "Eu não sou coach motivacional. Não vou dizer que você é incrível. 
-                  Minha especialidade é identificar como você sabota sua própria carreira sem anestesia."
-                </p>
+        {/* Treatment Status */}
+        {progress.isInTreatment && (
+          <Card className="bg-red-600/10 border-red-600/30 mb-8">
+            <CardHeader>
+              <CardTitle className="text-red-400 font-bebas flex items-center space-x-2">
+                <AlertTriangle size={24} />
+                <span>PACIENTE EM TRATAMENTO</span>
+              </CardTitle>
+              <CardDescription className="text-warm-gray/80">
+                Dívida atual: {progress.debtPoints} pontos | Progresso para alta médica
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Progress value={getProgressPercentage()} className="mb-4" />
+              <div className="flex justify-between text-sm text-warm-gray/60">
+                <span>Dívida de Autossabotagem</span>
+                <span>{progress.debtPoints === 0 ? "CURADO! 🏥" : `${progress.debtPoints} pontos restantes`}</span>
               </div>
-            </div>
-          </AlertDescription>
-        </Alert>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Main Professional Interface */}
+        {/* Check-in Section */}
+        {(showCheckIn || progress.isInTreatment) && (
+          <Card className="bg-dark-card border-dark-border mb-8">
+            <CardHeader>
+              <CardTitle className="text-warm-yellow font-bebas flex items-center space-x-2">
+                <Calendar size={24} />
+                <span>CHECK-IN DIÁRIO</span>
+              </CardTitle>
+              <CardDescription className="text-warm-gray/70">
+                {progress.checkInStreak > 0 ? `Sequência: ${progress.checkInStreak} dias` : "Faça seu primeiro check-in"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {checkInMessage && (
+                <Alert className="bg-green-600/10 border-green-600/30">
+                  <AlertDescription className="text-green-400">{checkInMessage}</AlertDescription>
+                </Alert>
+              )}
+              
+              <Button 
+                onClick={handleDailyCheckIn}
+                className="w-full bg-green-600 hover:bg-green-700 font-bebas tracking-wider"
+              >
+                ✅ FAZER CHECK-IN DIÁRIO
+              </Button>
+
+              {/* Pending Actions */}
+              {pendingActions.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="font-bebas text-warm-gray text-lg">AÇÕES PENDENTES:</h3>
+                  {pendingActions.map((action) => (
+                    <div key={action.id} className="flex items-center justify-between bg-dark-bg/50 p-3 rounded border border-dark-border">
+                      <div className="flex-1">
+                        <p className="text-warm-gray font-inter text-sm">{action.description}</p>
+                        <Badge className="bg-warm-yellow text-dark-bg text-xs mt-1">+{action.points} pontos</Badge>
+                      </div>
+                      <Button
+                        onClick={() => handleActionComplete(action.id)}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700 ml-4"
+                      >
+                        <CheckCircle size={16} />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Completed Today */}
+              {completedToday.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-bebas text-green-400 text-lg">COMPLETADO HOJE:</h3>
+                  {completedToday.map((action) => (
+                    <div key={action.id} className="flex items-center space-x-2 text-green-400 text-sm">
+                      <CheckCircle size={16} />
+                      <span>{action.description}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Main Interface */}
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Input Section */}
           <Card className="bg-dark-card border-dark-border relative overflow-hidden">
@@ -177,34 +294,43 @@ const CareerTruthAI = () => {
                 <span>CONFISSÃO PROFISSIONAL</span>
               </CardTitle>
               <CardDescription className="text-warm-gray/70 font-inter italic">
-                "O Dr. Desculpas pega sua prancheta corporativa e te observa intensamente. 
-                'Liste seus comportamentos de autossabotagem profissional. Todos. Sem exceção.'"
+                "Dr. Desculpas pega sua prancheta médica. 'Liste seus sintomas de autossabotagem profissional. Todos. Sem exceção.'"
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="bg-warm-yellow/10 p-3 rounded border-l-4 border-warm-yellow">
-                  <p className="text-warm-yellow font-inter text-sm font-medium">
-                    💭 "Conte sobre como você sabota sua própria carreira. Procrastinação em projetos importantes? 
-                    Evita feedback? Rejeita oportunidades por 'não estar preparado'? Seja brutalmente honesto."
+              {!progress.isInTreatment ? (
+                <>
+                  <div className="bg-warm-yellow/10 p-3 rounded border-l-4 border-warm-yellow">
+                    <p className="text-warm-yellow font-inter text-sm font-medium">
+                      💭 "Confesse: Como você sabota sua carreira? Procrastina projetos? Evita apresentações? 
+                      Rejeita oportunidades? Seja brutalmente honesto - sua recuperação depende disso."
+                    </p>
+                  </div>
+                  
+                  <Textarea
+                    placeholder="Dr. Desculpas ajusta o estetoscópio: 'Sintomas, por favor. Como você se sabota profissionalmente? Evita feedback? Procrastina? Tem medo de assumir responsabilidades? Preciso de todos os detalhes para o diagnóstico.'"
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    className="min-h-[200px] bg-dark-bg border-dark-border text-warm-gray resize-none font-inter focus:border-warm-yellow/50"
+                    disabled={isAnalyzing}
+                  />
+                  
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={!userInput.trim() || isAnalyzing}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bebas text-lg tracking-wider py-6"
+                  >
+                    {isAnalyzing ? "🔍 DIAGNOSTICANDO..." : "⚕️ SOLICITAR DIAGNÓSTICO MÉDICO"}
+                  </Button>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <Clock size={48} className="text-warm-yellow mx-auto mb-4" />
+                  <p className="text-warm-gray font-inter">
+                    Você está em tratamento ativo. Complete suas ações diárias para reduzir sua dívida de autossabotagem.
                   </p>
                 </div>
-                
-                <Textarea
-                  placeholder="Dr. Desculpas ergue a sobrancelha: 'Vamos lá, me conte como você sabota sua carreira. Por que evita apresentações? Por que não pede aumento? Por que procrastina projetos importantes? Quais seus padrões de autossabotagem profissional?'"
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  className="min-h-[200px] bg-dark-bg border-dark-border text-warm-gray resize-none font-inter focus:border-warm-yellow/50 transition-colors"
-                />
-              </div>
-              
-              <Button
-                onClick={handleSubmit}
-                disabled={!userInput.trim() || isAnalyzing}
-                className="w-full bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90 font-bebas text-lg tracking-wider py-6 transition-all duration-300 hover:scale-[1.02]"
-              >
-                {isAnalyzing ? "🔍 ANALISANDO AUTOSSABOTAGEM..." : "⚡ INICIAR AUTÓPSIA PROFISSIONAL"}
-              </Button>
+              )}
             </CardContent>
           </Card>
 
@@ -214,12 +340,12 @@ const CareerTruthAI = () => {
             <CardHeader>
               <CardTitle className="text-2xl font-bebas text-warm-yellow flex items-center space-x-2">
                 <span>📊</span>
-                <span>RELATÓRIO DE AUTOSSABOTAGEM</span>
+                <span>LAUDO MÉDICO</span>
               </CardTitle>
               <CardDescription className="text-warm-gray/70 font-inter italic">
                 {analysis ? 
-                  "O Dr. Desculpas termina sua análise profissional e remove as luvas. 'O diagnóstico está pronto.'" : 
-                  "O laboratório de autossabotagem aguarda seus padrões destrutivos profissionais..."
+                  "Dr. Desculpas termina o diagnóstico e remove as luvas. 'O laudo está pronto.'" : 
+                  "O laboratório médico aguarda seus sintomas de autossabotagem..."
                 }
               </CardDescription>
             </CardHeader>
@@ -227,15 +353,15 @@ const CareerTruthAI = () => {
               {isAnalyzing ? (
                 <div className="flex flex-col items-center justify-center py-12 space-y-4">
                   <div className="relative">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-warm-yellow"></div>
-                    <div className="absolute inset-0 rounded-full border-2 border-warm-yellow/20"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-600"></div>
+                    <div className="absolute inset-0 rounded-full border-2 border-red-600/20"></div>
                   </div>
                   <div className="text-center space-y-2">
-                    <p className="text-warm-gray font-inter animate-pulse">
-                      🔍 <em>"Catalogando padrões de autossabotagem profissional..."</em>
+                    <p className="text-red-400 font-inter animate-pulse">
+                      🔬 <em>"Analisando padrões de autossabotagem..."</em>
                     </p>
                     <p className="text-warm-gray/60 font-inter text-sm">
-                      Dr. Desculpas examina cada comportamento autodestrutivo meticulosamente
+                      Dr. Desculpas examina cada sintoma meticulosamente
                     </p>
                   </div>
                 </div>
@@ -247,30 +373,19 @@ const CareerTruthAI = () => {
                     </div>
                   </div>
                   <div className="mt-8 pt-6 border-t border-dark-border space-y-3">
-                    <div className="bg-warm-yellow/10 p-4 rounded border border-warm-yellow/30">
-                      <p className="text-warm-yellow font-inter text-sm font-medium text-center">
-                        💀 "A autópsia profissional está completa. Agora você decide: 
-                        implementar o protocolo anti-sabotagem ou continuar destruindo sua própria carreira?"
+                    <div className="bg-red-600/10 p-4 rounded border border-red-600/30">
+                      <p className="text-red-400 font-inter text-sm font-medium text-center">
+                        🏥 "Diagnóstico completo. Seu tratamento está ativo. Check-in diário obrigatório."
                       </p>
                     </div>
-                    <Button 
-                      onClick={() => {
-                        setAnalysis("");
-                        setUserInput("");
-                      }}
-                      variant="outline"
-                      className="w-full border-warm-yellow text-warm-yellow hover:bg-warm-yellow hover:text-dark-bg font-bebas tracking-wider transition-all duration-300"
-                    >
-                      🔄 NOVA AUTÓPSIA PROFISSIONAL
-                    </Button>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-12 space-y-4">
-                  <div className="text-6xl mb-4">🕵️</div>
+                  <div className="text-6xl mb-4">🩺</div>
                   <p className="text-warm-gray/60 font-inter italic">
-                    "O Dr. Desculpas aguarda pacientemente sua confissão de autossabotagem profissional. 
-                    Apenas então a autópsia da sua carreira poderá começar..."
+                    "Dr. Desculpas aguarda pacientemente seus sintomas de autossabotagem profissional. 
+                    Apenas então o diagnóstico médico poderá começar..."
                   </p>
                 </div>
               )}
@@ -278,49 +393,21 @@ const CareerTruthAI = () => {
           </Card>
         </div>
 
-        {/* Professional Instructions */}
-        <Card className="bg-dark-card/50 border-dark-border mt-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-warm-yellow/5 to-transparent rounded-lg"></div>
-          <CardHeader>
-            <CardTitle className="text-xl font-bebas text-warm-gray relative z-10">
-              🎭 COMO FUNCIONA A AUTÓPSIA DE AUTOSSABOTAGEM PROFISSIONAL
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="relative z-10">
-            <div className="grid md:grid-cols-3 gap-6 text-sm font-inter">
-              <div className="space-y-2">
-                <h3 className="font-bebas text-warm-yellow mb-2 flex items-center space-x-2">
-                  <span>🔍</span>
-                  <span>1. IDENTIFICAÇÃO</span>
-                </h3>
-                <p className="text-warm-gray/70 italic">
-                  "O Dr. analisa cada padrão de autossabotagem profissional em busca 
-                  de comportamentos que limitam sua carreira e crescimento."
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-bebas text-warm-yellow mb-2 flex items-center space-x-2">
-                  <span>⚖️</span>
-                  <span>2. DIAGNÓSTICO BRUTAL</span>
-                </h3>
-                <p className="text-warm-gray/70 italic">
-                  "Você recebe uma análise implacável sobre como seus 
-                  comportamentos estão sabotando seu potencial profissional."
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-bebas text-warm-yellow mb-2 flex items-center space-x-2">
-                  <span>🔥</span>
-                  <span>3. PROTOCOLO ANTI-SABOTAGEM</span>
-                </h3>
-                <p className="text-warm-gray/70 italic">
-                  "Um plano específico para os próximos 90 dias focado 
-                  em eliminar comportamentos que limitam sua carreira."
+        {/* Warning */}
+        <Alert className="bg-red-600/10 border-red-600/30 mt-8">
+          <AlertDescription className="text-warm-gray font-inter">
+            <div className="flex items-start space-x-3">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <strong className="text-red-400">Aviso Médico:</strong>
+                <p className="mt-1">
+                  "Este não é coaching motivacional. É tratamento médico para autossabotagem crônica. 
+                  Falhas no tratamento resultam em agravamento do quadro."
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </AlertDescription>
+        </Alert>
       </div>
     </div>
   );

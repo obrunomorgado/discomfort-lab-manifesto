@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { UserProgress, TestResult, Badge } from '@/types/user';
+import { UserProgress, TestResult, Badge, DailyAction } from '@/types/user';
 
 const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
   {
@@ -51,7 +51,7 @@ const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
   {
     id: 'streak-warrior',
     name: 'Guerreiro Consistente',
-    description: '7 dias consecutivos de atividade',
+    description: '7 dias consecutivos de check-in',
     icon: '🔥',
     category: 'consistency',
     rarity: 'rare',
@@ -65,17 +65,48 @@ const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
     category: 'special',
     rarity: 'legendary',
     points: 1000
+  },
+  {
+    id: 'recovered',
+    name: 'Curado da Autossabotagem',
+    description: 'Conseguiu alta médica - zerou pontos negativos',
+    icon: '🏥',
+    category: 'recovery',
+    rarity: 'legendary',
+    points: 2000
+  },
+  {
+    id: 'disciplined',
+    name: 'Disciplina de Ferro',
+    description: '30 dias consecutivos de check-in',
+    icon: '⚔️',
+    category: 'recovery',
+    rarity: 'epic',
+    points: 800
+  },
+  {
+    id: 'commitment',
+    name: 'Compromisso Total',
+    description: '7 dias consecutivos completando todas as ações',
+    icon: '🎖️',
+    category: 'recovery',
+    rarity: 'rare',
+    points: 400
   }
 ];
 
 const INITIAL_PROGRESS: UserProgress = {
   totalPoints: 0,
+  debtPoints: 0,
   level: 1,
   badges: [],
   testsCompleted: [],
   streakDays: 0,
+  checkInStreak: 0,
   lastActivity: new Date(),
-  honestyAverage: 0
+  honestyAverage: 0,
+  isInTreatment: false,
+  dailyActions: []
 };
 
 export const useUserProgress = () => {
@@ -88,13 +119,23 @@ export const useUserProgress = () => {
       setProgress({
         ...parsed,
         lastActivity: new Date(parsed.lastActivity),
+        lastCheckIn: parsed.lastCheckIn ? new Date(parsed.lastCheckIn) : undefined,
+        treatmentStartDate: parsed.treatmentStartDate ? new Date(parsed.treatmentStartDate) : undefined,
         testsCompleted: parsed.testsCompleted.map((test: any) => ({
           ...test,
-          completedAt: new Date(test.completedAt)
+          completedAt: new Date(test.completedAt),
+          dailyActionsAssigned: test.dailyActionsAssigned?.map((action: any) => ({
+            ...action,
+            dueDate: new Date(action.dueDate)
+          }))
         })),
         badges: parsed.badges.map((badge: any) => ({
           ...badge,
           unlockedAt: badge.unlockedAt ? new Date(badge.unlockedAt) : undefined
+        })),
+        dailyActions: (parsed.dailyActions || []).map((action: any) => ({
+          ...action,
+          dueDate: new Date(action.dueDate)
         }))
       });
     }
@@ -109,6 +150,21 @@ export const useUserProgress = () => {
     const newProgress = { ...progress };
     newProgress.testsCompleted.push(result);
     newProgress.totalPoints += result.pointsEarned;
+    
+    // Adicionar pontos negativos se gerados
+    if (result.debtPointsGenerated) {
+      newProgress.debtPoints += result.debtPointsGenerated;
+      newProgress.isInTreatment = true;
+      if (!newProgress.treatmentStartDate) {
+        newProgress.treatmentStartDate = new Date();
+      }
+    }
+
+    // Adicionar ações diárias se atribuídas
+    if (result.dailyActionsAssigned) {
+      newProgress.dailyActions.push(...result.dailyActionsAssigned);
+    }
+
     newProgress.level = Math.floor(newProgress.totalPoints / 1000) + 1;
     newProgress.lastActivity = new Date();
     
@@ -123,6 +179,64 @@ export const useUserProgress = () => {
       newProgress.totalPoints += badge.points;
     });
 
+    saveProgress(newProgress);
+    return newBadges;
+  };
+
+  const completeAction = (actionId: string) => {
+    const newProgress = { ...progress };
+    const actionIndex = newProgress.dailyActions.findIndex(a => a.id === actionId);
+    
+    if (actionIndex !== -1) {
+      const action = newProgress.dailyActions[actionIndex];
+      action.completed = true;
+      
+      // Reduzir pontos negativos
+      newProgress.debtPoints = Math.max(0, newProgress.debtPoints - action.points);
+      
+      // Verificar se conseguiu alta médica
+      if (newProgress.debtPoints === 0 && newProgress.isInTreatment) {
+        newProgress.isInTreatment = false;
+        // Badge de recuperação
+        const recoveredBadge = BADGES_DEFINITIONS.find(b => b.id === 'recovered');
+        if (recoveredBadge && !newProgress.badges.find(b => b.id === 'recovered')) {
+          newProgress.badges.push({ ...recoveredBadge, unlockedAt: new Date() });
+          newProgress.totalPoints += recoveredBadge.points;
+        }
+      }
+      
+      newProgress.lastActivity = new Date();
+      saveProgress(newProgress);
+    }
+    
+    return newProgress.debtPoints === 0 && newProgress.isInTreatment === false;
+  };
+
+  const performDailyCheckIn = () => {
+    const newProgress = { ...progress };
+    const today = new Date();
+    const lastCheckIn = newProgress.lastCheckIn;
+    
+    // Verificar se é check-in consecutivo
+    const isConsecutive = lastCheckIn && 
+      (today.getTime() - lastCheckIn.getTime()) <= 24 * 60 * 60 * 1000 + 60 * 60 * 1000; // 25 horas de margem
+    
+    if (isConsecutive) {
+      newProgress.checkInStreak += 1;
+    } else {
+      newProgress.checkInStreak = 1;
+    }
+    
+    newProgress.lastCheckIn = today;
+    newProgress.lastActivity = today;
+    
+    // Verificar badges de streak
+    const newBadges = checkForNewBadges(newProgress);
+    newBadges.forEach(badge => {
+      newProgress.badges.push({ ...badge, unlockedAt: new Date() });
+      newProgress.totalPoints += badge.points;
+    });
+    
     saveProgress(newProgress);
     return newBadges;
   };
@@ -153,7 +267,19 @@ export const useUserProgress = () => {
           shouldUnlock = currentProgress.honestyAverage >= 8.0;
           break;
         case 'streak-warrior':
-          shouldUnlock = currentProgress.streakDays >= 7;
+          shouldUnlock = currentProgress.checkInStreak >= 7;
+          break;
+        case 'disciplined':
+          shouldUnlock = currentProgress.checkInStreak >= 30;
+          break;
+        case 'commitment':
+          // 7 dias consecutivos completando todas as ações diárias
+          const last7Days = currentProgress.dailyActions.filter(action => {
+            const actionDate = new Date(action.dueDate);
+            const daysDiff = (new Date().getTime() - actionDate.getTime()) / (1000 * 3600 * 24);
+            return daysDiff <= 7 && action.completed;
+          });
+          shouldUnlock = last7Days.length >= 7;
           break;
         case 'legend':
           const availableTests = ['arquiteto-da-verdade', 'career-truth-ai', 'unbreakable-mind'];
@@ -171,19 +297,41 @@ export const useUserProgress = () => {
   };
 
   const getStats = () => {
+    const daysInTreatment = progress.treatmentStartDate ? 
+      Math.floor((new Date().getTime() - progress.treatmentStartDate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+
     return {
       testsCompleted: progress.testsCompleted.length,
       totalPoints: progress.totalPoints,
+      debtPoints: progress.debtPoints,
       badgesEarned: progress.badges.length,
       currentStreak: progress.streakDays,
-      honestyScore: Math.round(progress.honestyAverage * 10) / 10
+      checkInStreak: progress.checkInStreak,
+      honestyScore: Math.round(progress.honestyAverage * 10) / 10,
+      isInTreatment: progress.isInTreatment,
+      daysInTreatment
     };
+  };
+
+  const getPendingActions = () => {
+    return progress.dailyActions.filter(action => !action.completed);
+  };
+
+  const getCompletedActionsToday = () => {
+    const today = new Date().toDateString();
+    return progress.dailyActions.filter(action => 
+      action.completed && new Date(action.dueDate).toDateString() === today
+    );
   };
 
   return {
     progress,
     addTestResult,
+    completeAction,
+    performDailyCheckIn,
     getStats,
+    getPendingActions,
+    getCompletedActionsToday,
     saveProgress
   };
 };
