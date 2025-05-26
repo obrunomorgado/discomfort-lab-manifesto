@@ -61,3 +61,13 @@ export interface SquadNotification {
   timestamp: Date;
   isRead: boolean;
 }
+
+export interface SquadChatMessage {
+  id: string;
+  squadId: string;
+  userId: string;
+  username: string;
+  message: string;
+  timestamp: Date;
+  type: 'text' | 'mission_start' | 'mission_complete' | 'mission_fail' | 'system';
+}

@@ -44,6 +44,22 @@ export const useSquad = () => {
     localStorage.setItem('squadNotifications', JSON.stringify(newNotifications));
   };
 
+  const sendChatMessage = (squadId: string, message: string, type: 'mission_start' | 'mission_complete' | 'mission_fail' | 'system' = 'system') => {
+    // Simular envio de mensagem automática para o chat
+    const chatMessages = JSON.parse(localStorage.getItem(`squadChat-${squadId}`) || '[]');
+    const newMessage = {
+      id: `sys-${Date.now()}`,
+      squadId,
+      userId: 'system',
+      username: 'SISTEMA',
+      message,
+      timestamp: new Date(),
+      type
+    };
+    chatMessages.push(newMessage);
+    localStorage.setItem(`squadChat-${squadId}`, JSON.stringify(chatMessages));
+  };
+
   const generateInviteCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   };
@@ -72,6 +88,10 @@ export const useSquad = () => {
     const updatedSquads = [...squads, newSquad];
     saveSquads(updatedSquads);
     setCurrentSquad(newSquad);
+
+    // Mensagem automática no chat
+    sendChatMessage(newSquad.id, `🏆 Squad "${name}" foi formado! Boa sorte, recrutas!`, 'system');
+
     return newSquad;
   };
 
@@ -111,6 +131,10 @@ export const useSquad = () => {
     };
 
     saveNotifications([...notifications, notification]);
+
+    // Mensagem automática no chat
+    sendChatMessage(squad.id, `⚡ ${username} se juntou ao esquadrão! Bem-vindo ao time!`, 'system');
+
     return true;
   };
 
@@ -120,6 +144,9 @@ export const useSquad = () => {
 
     const member = squad.members.find(m => m.userId === userId);
     if (!member) return false;
+
+    // Mensagem automática no chat antes de sair
+    sendChatMessage(squadId, `🔥 ${member.username} abandonou o esquadrão.`, 'system');
 
     // Se é o líder e há outros membros, transferir liderança
     if (member.isLeader && squad.members.length > 1) {
@@ -167,6 +194,17 @@ export const useSquad = () => {
     };
 
     saveNotifications([...notifications, notification]);
+
+    // Mensagem automática no chat
+    sendChatMessage(squadId, `💥 ${failedUsername} falhou na missão! Todos perdem 20% do XP. Mantenham o foco!`, 'mission_fail');
+  };
+
+  const reportMissionSuccess = (squadId: string, username: string, missionName: string) => {
+    sendChatMessage(squadId, `🎯 ${username} completou a missão "${missionName}"! +20% XP para todos!`, 'mission_complete');
+  };
+
+  const reportMissionStart = (squadId: string, username: string, missionName: string) => {
+    sendChatMessage(squadId, `🔥 ${username} iniciou a missão "${missionName}". Boa sorte!`, 'mission_start');
   };
 
   const getSquadByUserId = (userId: string): Squad | null => {
@@ -188,6 +226,8 @@ export const useSquad = () => {
     joinSquad,
     leaveSquad,
     applySquadPenalty,
+    reportMissionSuccess,
+    reportMissionStart,
     getSquadByUserId,
     markNotificationAsRead,
     unreadNotifications: notifications.filter(n => !n.isRead).length

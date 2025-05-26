@@ -1,5 +1,6 @@
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePenaltyContract } from '@/hooks/usePenaltyContract';
+import { useSquad } from '@/hooks/useSquad';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -21,10 +22,12 @@ import OperationHistory from '@/components/PostoDeComando/OperationHistory';
 import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
 import SquadManagement from '@/components/Squad/SquadManagement';
 import PotLink from '@/components/Squad/PotLink';
+import SquadChat from '@/components/Squad/SquadChat';
 
 const PostoDeComando = () => {
   const { progress, getStats, getPendingActions, saveProgress, applyMissionResult } = useUserProgress();
   const { activeContract } = usePenaltyContract();
+  const { getSquadByUserId, reportMissionSuccess, reportMissionStart } = useSquad();
   const { toast } = useToast();
   const [showPenaltySetup, setShowPenaltySetup] = useState(false);
   const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
@@ -34,9 +37,11 @@ const PostoDeComando = () => {
   const [showBettingMachine, setShowBettingMachine] = useState(false);
   const [showSquadManagement, setShowSquadManagement] = useState(false);
   const [showPotLink, setShowPotLink] = useState(false);
+  const [showSquadChat, setShowSquadChat] = useState(false);
   
   const stats = getStats();
   const pendingActions = getPendingActions();
+  const userSquad = getSquadByUserId('current-user');
 
   const handleMissionSelect = (mission: any, isDoubled: boolean) => {
     const newProgress = { ...progress };
@@ -48,6 +53,11 @@ const PostoDeComando = () => {
     newProgress.lastActivity = new Date();
     saveProgress(newProgress);
     setShowMissionSelector(false);
+
+    // Reportar início da missão no chat do squad
+    if (userSquad) {
+      reportMissionStart(userSquad.id, progress.username || 'Recruta', mission.title);
+    }
   };
 
   const handleMissionReport = (success: boolean) => {
@@ -69,6 +79,11 @@ const PostoDeComando = () => {
       mission.pointsEarned = finalPoints;
       mission.completed = true;
       mission.completedAt = new Date();
+
+      // Reportar sucesso no chat do squad
+      if (userSquad) {
+        reportMissionSuccess(userSquad.id, progress.username || 'Recruta', mission.selectedMission.title);
+      }
     } else {
       const basePenalty = 5;
       let penalty = mission.isDoubled ? basePenalty * 2 : basePenalty;
@@ -230,6 +245,15 @@ const PostoDeComando = () => {
             <OperationSchedule progress={progress} pendingActions={pendingActions} />
           </div>
         </div>
+
+        {/* Squad Chat - Só aparece se estiver em um squad */}
+        {userSquad && (
+          <SquadChat 
+            squadId={userSquad.id}
+            isOpen={showSquadChat}
+            onToggle={() => setShowSquadChat(!showSquadChat)}
+          />
+        )}
 
         {/* Modals */}
         <PenaltySetupModal 
