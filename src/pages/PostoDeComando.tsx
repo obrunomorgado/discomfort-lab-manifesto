@@ -23,12 +23,14 @@ import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
 import SquadManagement from '@/components/Squad/SquadManagement';
 import PotLink from '@/components/Squad/PotLink';
 import SquadChat from '@/components/Squad/SquadChat';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 const PostoDeComando = () => {
   const { progress, getStats, getPendingActions, saveProgress, applyMissionResult } = useUserProgress();
   const { activeContract } = usePenaltyContract();
   const { getSquadByUserId, reportMissionSuccess, reportMissionStart } = useSquad();
   const { toast } = useToast();
+  const { playSound } = useSoundEffects();
   const [showPenaltySetup, setShowPenaltySetup] = useState(false);
   const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
   const [showMissionSelector, setShowMissionSelector] = useState(false);
@@ -53,6 +55,9 @@ const PostoDeComando = () => {
     newProgress.lastActivity = new Date();
     saveProgress(newProgress);
     setShowMissionSelector(false);
+
+    // Play button click sound
+    playSound('button_click');
 
     // Reportar início da missão no chat do squad
     if (userSquad) {
@@ -80,6 +85,12 @@ const PostoDeComando = () => {
       mission.completed = true;
       mission.completedAt = new Date();
 
+      // Play mission success sound
+      playSound('mission_success');
+      
+      // Play XP gained sound after a delay
+      setTimeout(() => playSound('xp_gained'), 500);
+
       // Reportar sucesso no chat do squad
       if (userSquad) {
         reportMissionSuccess(userSquad.id, progress.username || 'Recruta', mission.selectedMission.title);
@@ -97,6 +108,12 @@ const PostoDeComando = () => {
       mission.penaltyApplied = penalty;
       mission.completed = false;
       mission.completedAt = new Date();
+      
+      // Play mission failure sound
+      playSound('mission_failure');
+      
+      // Play penalty sound after a delay
+      setTimeout(() => playSound('penalty_applied'), 700);
       
       // Adicionar transação de penalidade
       const transaction = {
@@ -157,6 +174,9 @@ const PostoDeComando = () => {
     };
     saveProgress(newProgress);
     setShowDiscomfortCard(false);
+    
+    // Play button click sound
+    playSound('button_click');
   };
 
   const handleBettingSelect = (envelope: any) => {
@@ -168,6 +188,9 @@ const PostoDeComando = () => {
     };
     saveProgress(newProgress);
     setShowBettingMachine(false);
+    
+    // Play button click sound
+    playSound('button_click');
   };
 
   return (

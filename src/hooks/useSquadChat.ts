@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { SquadChatMessage } from '@/types/squad';
+import { useSoundEffects } from './useSoundEffects';
 
 export const useSquadChat = (squadId: string | null) => {
   const [messages, setMessages] = useState<SquadChatMessage[]>([]);
+  const { playSound } = useSoundEffects();
 
   useEffect(() => {
     if (!squadId) return;
@@ -39,6 +41,11 @@ export const useSquadChat = (squadId: string | null) => {
 
     const updatedMessages = [...messages, newMessage];
     saveMessages(updatedMessages);
+    
+    // Play chat message sound for regular messages
+    if (userId !== 'system') {
+      playSound('chat_message');
+    }
   };
 
   const sendSystemMessage = (message: string, type: SquadChatMessage['type'] = 'system') => {
@@ -56,6 +63,19 @@ export const useSquadChat = (squadId: string | null) => {
 
     const updatedMessages = [...messages, systemMessage];
     saveMessages(updatedMessages);
+    
+    // Play appropriate sound for system messages
+    switch (type) {
+      case 'mission_complete':
+        playSound('mission_success');
+        break;
+      case 'mission_fail':
+        playSound('mission_failure');
+        break;
+      default:
+        playSound('squad_notification');
+        break;
+    }
   };
 
   return {

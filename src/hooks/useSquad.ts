@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Squad, SquadMember, SquadInvite, SquadNotification } from '@/types/squad';
+import { useSoundEffects } from './useSoundEffects';
 
 const INITIAL_SQUADS: Squad[] = [];
 
@@ -8,6 +8,7 @@ export const useSquad = () => {
   const [squads, setSquads] = useState<Squad[]>(INITIAL_SQUADS);
   const [currentSquad, setCurrentSquad] = useState<Squad | null>(null);
   const [notifications, setNotifications] = useState<SquadNotification[]>([]);
+  const { playSound } = useSoundEffects();
 
   useEffect(() => {
     const savedSquads = localStorage.getItem('squads');
@@ -91,6 +92,9 @@ export const useSquad = () => {
 
     // Mensagem automática no chat
     sendChatMessage(newSquad.id, `🏆 Squad "${name}" foi formado! Boa sorte, recrutas!`, 'system');
+    
+    // Play squad creation sound
+    playSound('squad_notification');
 
     return newSquad;
   };
@@ -134,6 +138,9 @@ export const useSquad = () => {
 
     // Mensagem automática no chat
     sendChatMessage(squad.id, `⚡ ${username} se juntou ao esquadrão! Bem-vindo ao time!`, 'system');
+    
+    // Play member joined sound
+    playSound('squad_member_joined');
 
     return true;
   };
@@ -147,6 +154,9 @@ export const useSquad = () => {
 
     // Mensagem automática no chat antes de sair
     sendChatMessage(squadId, `🔥 ${member.username} abandonou o esquadrão.`, 'system');
+    
+    // Play member left sound
+    playSound('squad_member_left');
 
     // Se é o líder e há outros membros, transferir liderança
     if (member.isLeader && squad.members.length > 1) {
@@ -197,14 +207,19 @@ export const useSquad = () => {
 
     // Mensagem automática no chat
     sendChatMessage(squadId, `💥 ${failedUsername} falhou na missão! Todos perdem 20% do XP. Mantenham o foco!`, 'mission_fail');
+    
+    // Play penalty sound
+    playSound('penalty_applied');
   };
 
   const reportMissionSuccess = (squadId: string, username: string, missionName: string) => {
     sendChatMessage(squadId, `🎯 ${username} completou a missão "${missionName}"! +20% XP para todos!`, 'mission_complete');
+    playSound('mission_success');
   };
 
   const reportMissionStart = (squadId: string, username: string, missionName: string) => {
     sendChatMessage(squadId, `🔥 ${username} iniciou a missão "${missionName}". Boa sorte!`, 'mission_start');
+    playSound('squad_notification');
   };
 
   const getSquadByUserId = (userId: string): Squad | null => {
