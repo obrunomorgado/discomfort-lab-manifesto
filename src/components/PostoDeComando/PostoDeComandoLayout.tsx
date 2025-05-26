@@ -21,6 +21,9 @@ import SquadChat from '@/components/Squad/SquadChat';
 import StreamDaVergonha from '@/components/Squad/StreamDaVergonha';
 import StickerSystem from '@/components/Squad/StickerSystem';
 import Desafio72h from '@/components/Squad/Desafio72h';
+import QRRoletaDor from '@/components/Squad/QRRoletaDor';
+import ApadrinhaMeuDesafio from '@/components/Squad/ApadrinhaMeuDesafio';
+import DiscordMuroLamentacao from '@/components/Squad/DiscordMuroLamentacao';
 
 interface PostoDeComandoLayoutProps {
   progress: UserProgress;
@@ -103,7 +106,7 @@ const PostoDeComandoLayout = ({
                 </div>
               )}
 
-              {/* New Advanced Features Section */}
+              {/* Advanced Features Section */}
               <div className="space-y-6">
                 <h2 className="text-2xl font-bebas text-cyber-fuchsia cyber-glow mb-4">
                   🔥 ADVANCED FEATURES
@@ -115,6 +118,18 @@ const PostoDeComandoLayout = ({
                 </div>
                 
                 <Desafio72h />
+
+                {/* FASE 2: External Integrations & QR System */}
+                <h2 className="text-2xl font-bebas text-red-400 cyber-glow mb-4">
+                  ⚡ EXTERNAL INTEGRATIONS
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <QRRoletaDor />
+                  <ApadrinhaMeuDesafio />
+                </div>
+                
+                <DiscordMuroLamentacao />
               </div>
             </div>
 
