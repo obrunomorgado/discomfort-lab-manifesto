@@ -4,7 +4,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAudioEffects } from '@/hooks/useAudioEffects';
-import { Shield, Target, Zap, Users, AlertTriangle } from 'lucide-react';
+import { UserProgress } from '@/types/user';
+import { Shield, Target, Zap, Users, AlertTriangle, MessageCircle, Trophy, Coins, Settings } from 'lucide-react';
 
 interface OnboardingStep {
   id: string;
@@ -14,9 +15,10 @@ interface OnboardingStep {
   dramaticText: string;
   icon: React.ReactNode;
   soundEffect?: string;
+  nextSteps?: string[];
 }
 
-const ONBOARDING_STEPS: OnboardingStep[] = [
+const getOnboardingSteps = (progress?: UserProgress): OnboardingStep[] => [
   {
     id: 'welcome',
     rank: 'RECRUTA',
@@ -33,16 +35,18 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     description: 'Seu centro de operações. Aceite missões, reporte falhas e monitore seu progresso.',
     dramaticText: 'Este é SEU posto de combate. Cada missão aceita é um compromisso de SANGUE!',
     icon: <Target size={48} className="text-cyber-cyan" />,
-    soundEffect: 'mission_success'
+    soundEffect: 'mission_success',
+    nextSteps: progress?.currentMission ? ['Reporte o resultado da sua missão atual'] : ['Selecione sua primeira missão']
   },
   {
     id: 'desconfortos',
     rank: 'CABO',
     title: 'ZONA DOS DESCONFORTOS',
-    description: 'Testes que vão expor suas fraquezas sem piedade. Encare a verdade sobre você.',
+    description: 'Testes que vão expor suas fraquezas sem piedade. Acesse via menu ou link direto.',
     dramaticText: 'Aqui você descobre ONDE está falhando. Sem açúcar, sem mentiras!',
     icon: <AlertTriangle size={48} className="text-red-400" />,
-    soundEffect: 'penalty_applied'
+    soundEffect: 'penalty_applied',
+    nextSteps: ['Faça um teste de personalidade', 'Descubra seus pontos fracos']
   },
   {
     id: 'squad',
@@ -51,15 +55,36 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     description: 'Junte-se a outros guerreiros. Accountability em grupo amplifica resultados.',
     dramaticText: 'SOZINHO você é fraco. Em SQUAD, vocês se tornam imparáveis!',
     icon: <Users size={48} className="text-cyber-fuchsia" />,
-    soundEffect: 'squad_notification'
+    soundEffect: 'squad_notification',
+    nextSteps: progress?.level && progress.level >= 2 ? ['Crie ou entre em um Squad'] : ['Alcance nível 2 para acessar Squads']
+  },
+  {
+    id: 'penalties',
+    rank: 'TENENTE',
+    title: 'SKIN IN THE GAME',
+    description: 'Compromissos financeiros reais. Falhou? PAGUE! Sucesso tem que ter consequência.',
+    dramaticText: 'Aqui você coloca SEU DINHEIRO onde está sua BOCA!',
+    icon: <Coins size={48} className="text-cyber-warning" />,
+    soundEffect: 'penalty_applied',
+    nextSteps: ['Configure um compromisso financeiro', 'Ative penalidades automáticas']
+  },
+  {
+    id: 'advanced',
+    rank: 'CAPITÃO',
+    title: 'RECURSOS AVANÇADOS',
+    description: 'Chat do Squad, Roleta da Dor, QR Codes, Discord e muito mais.',
+    dramaticText: 'Ferramentas de ELITE para guerreiros de ELITE!',
+    icon: <Settings size={48} className="text-cyber-cyan" />,
+    soundEffect: 'squad_bonus',
+    nextSteps: ['Explore o chat do Squad', 'Configure integrações externas']
   },
   {
     id: 'ready',
-    rank: 'TENENTE',
+    rank: 'MAJOR',
     title: 'PRONTO PARA O COMBATE',
     description: 'Você foi briefado. Agora é hora de AGIR. Sem desculpas, sem exceções.',
-    dramaticText: 'O treinamento acabou, TENENTE! Hora de mostrar do que você é feito!',
-    icon: <Zap size={48} className="text-cyber-neon" />,
+    dramaticText: 'O treinamento acabou, MAJOR! Hora de mostrar do que você é feito!',
+    icon: <Trophy size={48} className="text-cyber-neon" />,
     soundEffect: 'mission_success'
   }
 ];
@@ -67,14 +92,16 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
 interface MilitaryOnboardingProps {
   isOpen: boolean;
   onComplete: () => void;
+  progress?: UserProgress;
 }
 
-const MilitaryOnboarding = ({ isOpen, onComplete }: MilitaryOnboardingProps) => {
+const MilitaryOnboarding = ({ isOpen, onComplete, progress }: MilitaryOnboardingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const { playSound } = useAudioEffects();
 
-  const step = ONBOARDING_STEPS[currentStep];
+  const steps = getOnboardingSteps(progress);
+  const step = steps[currentStep];
 
   useEffect(() => {
     if (isOpen && step?.soundEffect) {
@@ -94,7 +121,7 @@ const MilitaryOnboarding = ({ isOpen, onComplete }: MilitaryOnboardingProps) => 
   }, [currentStep, isOpen]);
 
   const handleNext = () => {
-    if (currentStep < ONBOARDING_STEPS.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
       playSound('button_click');
     } else {
@@ -108,11 +135,16 @@ const MilitaryOnboarding = ({ isOpen, onComplete }: MilitaryOnboardingProps) => 
     onComplete();
   };
 
+  const handleGoToStep = (stepIndex: number) => {
+    setCurrentStep(stepIndex);
+    playSound('button_click');
+  };
+
   if (!step) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-2xl bg-military-card border-cyber-warning/50 rivet-border">
+      <DialogContent className="max-w-3xl bg-military-card border-cyber-warning/50 rivet-border">
         <div className="relative">
           {/* Header militar */}
           <div className="text-center mb-6 border-b border-cyber-warning/30 pb-4">
@@ -145,15 +177,31 @@ const MilitaryOnboarding = ({ isOpen, onComplete }: MilitaryOnboardingProps) => 
             </p>
           </div>
 
-          {/* Progress indicator */}
+          {/* Próximos passos sugeridos */}
+          {step.nextSteps && step.nextSteps.length > 0 && (
+            <div className="bg-cyber-cyan/10 border border-cyber-cyan/30 rounded p-4 mb-6">
+              <h4 className="font-bebas text-cyber-cyan text-sm mb-2">PRÓXIMOS PASSOS SUGERIDOS:</h4>
+              <ul className="text-sm text-warm-gray space-y-1">
+                {step.nextSteps.map((nextStep, index) => (
+                  <li key={index} className="flex items-center space-x-2">
+                    <span className="text-cyber-cyan">•</span>
+                    <span>{nextStep}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Progress indicator com navegação */}
           <div className="flex justify-center space-x-2 mb-6">
-            {ONBOARDING_STEPS.map((_, index) => (
-              <div
+            {steps.map((_, index) => (
+              <button
                 key={index}
-                className={`w-3 h-3 rounded-full ${
+                onClick={() => handleGoToStep(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
                   index <= currentStep 
-                    ? 'bg-cyber-warning' 
-                    : 'bg-military-border'
+                    ? 'bg-cyber-warning hover:bg-cyber-warning/80' 
+                    : 'bg-military-border hover:bg-military-border/60'
                 }`}
               />
             ))}
@@ -166,21 +214,21 @@ const MilitaryOnboarding = ({ isOpen, onComplete }: MilitaryOnboardingProps) => 
               variant="outline"
               className="border-military-border text-warm-gray hover:bg-military-border/20 font-bebas"
             >
-              PULAR BRIEFING
+              FINALIZAR TOUR
             </Button>
             
             <Button
               onClick={handleNext}
               className="bg-cyber-warning text-military-bg hover:bg-cyber-warning/90 font-bebas px-6"
             >
-              {currentStep === ONBOARDING_STEPS.length - 1 ? 'INICIAR MISSÃO!' : 'PRÓXIMO COMANDO'}
+              {currentStep === steps.length - 1 ? 'INICIAR OPERAÇÕES!' : 'PRÓXIMO COMANDO'}
             </Button>
           </div>
 
           {/* Contador de passos */}
           <div className="text-center mt-4">
             <span className="text-xs text-warm-gray/60 font-consolas">
-              BRIEFING {currentStep + 1} DE {ONBOARDING_STEPS.length}
+              BRIEFING {currentStep + 1} DE {steps.length}
             </span>
           </div>
         </div>

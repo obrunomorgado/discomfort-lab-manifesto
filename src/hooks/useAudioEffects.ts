@@ -1,5 +1,6 @@
 
 import { useCallback } from 'react';
+import { useAudioSettings } from './useAudioSettings';
 
 type SoundType = 
   | 'mission_success' 
@@ -44,7 +45,14 @@ const AUDIO_CONFIGS: Record<SoundType, AudioConfig> = {
 const audioCache = new Map<string, HTMLAudioElement>();
 
 export const useAudioEffects = () => {
+  const { settings } = useAudioSettings();
+
   const playSound = useCallback((soundType: SoundType) => {
+    // Se o som estiver desabilitado, não toca nada
+    if (!settings.soundEnabled) {
+      return;
+    }
+
     try {
       const config = AUDIO_CONFIGS[soundType];
       
@@ -75,7 +83,7 @@ export const useAudioEffects = () => {
       console.log('Audio effects not supported');
       fallbackToSyntheticSound(soundType);
     }
-  }, []);
+  }, [settings.soundEnabled]);
 
   const stopSound = useCallback((soundType: SoundType) => {
     try {

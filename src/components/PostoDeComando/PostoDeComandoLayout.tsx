@@ -28,6 +28,7 @@ interface PostoDeComandoLayoutProps {
   onShowBettingMachine: () => void;
   onShowPenaltySetup: () => void;
   onShowPenaltyManagement: () => void;
+  onStartTour?: () => void;
 }
 
 const PostoDeComandoLayout = ({
@@ -43,13 +44,18 @@ const PostoDeComandoLayout = ({
   onShowMissionSelector,
   onShowBettingMachine,
   onShowPenaltySetup,
-  onShowPenaltyManagement
+  onShowPenaltyManagement,
+  onStartTour
 }: PostoDeComandoLayoutProps) => {
   return (
     <div className="min-h-screen bg-military-bg py-8 px-4 scanline-overlay">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <CommandHeader progress={progress} pendingActionsCount={pendingActions.length} />
+        <CommandHeader 
+          progress={progress} 
+          pendingActionsCount={pendingActions.length}
+          onStartTour={onStartTour}
+        />
 
         {/* Dr. Nicotine Section */}
         <div className="card-base">

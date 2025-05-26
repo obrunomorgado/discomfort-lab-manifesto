@@ -18,7 +18,7 @@ const PostoDeComando = () => {
   const { getSquadByUserId } = useSquad();
   const { userSquad, handleMissionStart, handleMissionSuccess, handleMissionFailure } = useSquadIntegration();
   const { preloadSounds } = useAudioEffects();
-  const { showOnboarding, completeOnboarding } = useOnboarding();
+  const { showOnboarding, completeOnboarding, startOnboarding } = useOnboarding();
   
   const {
     handleMissionSelect,
@@ -76,6 +76,10 @@ const PostoDeComando = () => {
     completeOnboarding();
   };
 
+  const handleStartTour = () => {
+    startOnboarding();
+  };
+
   return (
     <>
       <PostoDeComandoLayout
@@ -92,6 +96,7 @@ const PostoDeComando = () => {
         onShowBettingMachine={() => setShowBettingMachine(true)}
         onShowPenaltySetup={() => setShowPenaltySetup(true)}
         onShowPenaltyManagement={() => setShowPenaltyManagement(true)}
+        onStartTour={handleStartTour}
       />
 
       <PostoDeComandoModals
@@ -114,6 +119,7 @@ const PostoDeComando = () => {
       <MilitaryOnboarding
         isOpen={showOnboarding}
         onComplete={handleOnboardingComplete}
+        progress={progress}
       />
     </>
   );

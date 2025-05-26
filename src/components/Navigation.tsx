@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { useUserProgress } from "@/hooks/useUserProgress";
+import { useAudioSettings } from "@/hooks/useAudioSettings";
 import CreditCounter from "@/components/Credits/CreditCounter";
 import CheckoutModal from "@/components/Credits/CheckoutModal";
 
@@ -12,10 +14,10 @@ export const Navigation = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const location = useLocation();
   const { progress, addCredits } = useUserProgress();
+  const { settings, toggleSound } = useAudioSettings();
 
   const navItems = [
     { name: "Posto de Comando", path: "/posto-de-comando" },
-    { name: "Desconfortos", path: "/testes" },
     { name: "Sem Desculpas IA", path: "/career-truth-ai" },
     { name: "Arquiteto da Verdade", path: "/arquiteto-da-verdade" },
     { name: "Unbreakable Mind", path: "/unbreakable-mind" },
@@ -52,6 +54,17 @@ export const Navigation = () => {
                 </Link>
               ))}
               
+              {/* Sound Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleSound}
+                className="text-warm-gray hover:text-warm-yellow"
+                title={settings.soundEnabled ? "Desligar som" : "Ligar som"}
+              >
+                {settings.soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              </Button>
+              
               {/* Credit Counter */}
               <CreditCounter 
                 credits={progress.credits} 
@@ -75,6 +88,14 @@ export const Navigation = () => {
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleSound}
+                className="text-warm-gray hover:text-warm-yellow"
+              >
+                {settings.soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              </Button>
               <CreditCounter 
                 credits={progress.credits} 
                 onClick={() => setIsCheckoutOpen(true)}

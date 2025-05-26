@@ -3,15 +3,16 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSquad } from '@/hooks/useSquad';
-import { Shield, Users, Bell, MessageCircle } from 'lucide-react';
+import { Shield, Users, Bell, MessageCircle, HelpCircle } from 'lucide-react';
 import { UserProgress } from '@/types/user';
 
 interface CommandHeaderProps {
   progress: UserProgress;
   pendingActionsCount: number;
+  onStartTour?: () => void;
 }
 
-const CommandHeader = ({ progress, pendingActionsCount }: CommandHeaderProps) => {
+const CommandHeader = ({ progress, pendingActionsCount, onStartTour }: CommandHeaderProps) => {
   const { getSquadByUserId, unreadNotifications } = useSquad();
   const userSquad = getSquadByUserId('current-user');
 
@@ -33,6 +34,19 @@ const CommandHeader = ({ progress, pendingActionsCount }: CommandHeaderProps) =>
         </div>
         
         <div className="flex items-center space-x-4">
+          {/* Tour Button */}
+          {onStartTour && (
+            <Button
+              onClick={onStartTour}
+              variant="outline"
+              size="sm"
+              className="border-cyber-cyan/50 text-cyber-cyan hover:bg-cyber-cyan/20 font-bebas"
+            >
+              <HelpCircle size={16} className="mr-2" />
+              TOUR
+            </Button>
+          )}
+
           {userSquad && (
             <div className="flex items-center space-x-2 bg-military-card/50 p-3 rounded border border-cyber-cyan/30">
               <Shield size={20} className="text-cyber-cyan" />

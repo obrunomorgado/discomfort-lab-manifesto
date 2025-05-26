@@ -11,12 +11,11 @@ export const useOnboarding = () => {
     const checkOnboardingStatus = () => {
       try {
         const completed = localStorage.getItem(ONBOARDING_STORAGE_KEY);
-        if (!completed) {
-          setShowOnboarding(true);
-        }
+        // Não mostra automaticamente mais, apenas marca como loading false
+        setShowOnboarding(false);
       } catch (error) {
         console.log('Error checking onboarding status:', error);
-        setShowOnboarding(true);
+        setShowOnboarding(false);
       } finally {
         setIsLoading(false);
       }
@@ -37,6 +36,10 @@ export const useOnboarding = () => {
     }
   };
 
+  const startOnboarding = () => {
+    setShowOnboarding(true);
+  };
+
   const resetOnboarding = () => {
     try {
       localStorage.removeItem(ONBOARDING_STORAGE_KEY);
@@ -46,10 +49,20 @@ export const useOnboarding = () => {
     }
   };
 
+  const isOnboardingCompleted = () => {
+    try {
+      return localStorage.getItem(ONBOARDING_STORAGE_KEY) === 'true';
+    } catch (error) {
+      return false;
+    }
+  };
+
   return {
     showOnboarding,
     isLoading,
     completeOnboarding,
-    resetOnboarding
+    startOnboarding,
+    resetOnboarding,
+    isOnboardingCompleted
   };
 };
