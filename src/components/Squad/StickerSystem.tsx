@@ -26,6 +26,10 @@ const StickerSystem = () => {
   const { toast } = useToast();
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
 
+  // Safe access to missionsCompleted with fallback to empty array
+  const missionsCompleted = progress.missionsCompleted || [];
+  const completedMissions = missionsCompleted.filter(m => m.completed);
+
   const stickers: Sticker[] = [
     {
       id: 'sem-mimimi-1',
@@ -33,7 +37,7 @@ const StickerSystem = () => {
       description: 'Complete 5 missões consecutivas sem falhar',
       icon: <Shield size={24} className="text-cyber-neon" />,
       rarity: 'rare',
-      unlocked: progress.missionsCompleted.filter(m => m.completed).length >= 5,
+      unlocked: completedMissions.length >= 5,
       condition: '5 missões consecutivas',
       points: 100
     },
@@ -43,7 +47,7 @@ const StickerSystem = () => {
       description: 'Complete 10 missões em uma semana',
       icon: <Target size={24} className="text-cyber-cyan" />,
       rarity: 'epic',
-      unlocked: progress.missionsCompleted.filter(m => m.completed).length >= 10,
+      unlocked: completedMissions.length >= 10,
       condition: '10 missões/semana',
       points: 250
     },
@@ -73,7 +77,7 @@ const StickerSystem = () => {
       description: 'Complete primeira missão',
       icon: <Star size={24} className="text-warm-gray" />,
       rarity: 'common',
-      unlocked: progress.missionsCompleted.length > 0,
+      unlocked: missionsCompleted.length > 0,
       condition: 'Primeira missão',
       points: 25
     },
