@@ -1,7 +1,7 @@
 
 export const createActionHandlers = (
   completeAction: (actionId: string) => boolean,
-  performDailyCheckIn: () => any[],
+  performDailyCheckIn: () => Promise<any[]>,
   setCheckInMessage: (message: string) => void
 ) => {
   const handleActionComplete = (actionId: string) => {
@@ -11,9 +11,14 @@ export const createActionHandlers = (
     }
   };
 
-  const handleDailyCheckIn = () => {
-    const newBadges = performDailyCheckIn();
-    setCheckInMessage(`✅ Check-in realizado! ${newBadges.length > 0 ? `Novas badges: ${newBadges.map(b => b.name).join(', ')}` : ''}`);
+  const handleDailyCheckIn = async () => {
+    try {
+      const newBadges = await performDailyCheckIn();
+      setCheckInMessage(`✅ Check-in realizado! ${newBadges.length > 0 ? `Novas badges: ${newBadges.map(b => b.name).join(', ')}` : ''}`);
+    } catch (error) {
+      console.error('Error in daily check-in:', error);
+      setCheckInMessage('❌ Erro no check-in. Tente novamente.');
+    }
   };
 
   return {

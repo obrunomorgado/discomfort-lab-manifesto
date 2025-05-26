@@ -71,7 +71,7 @@ export const updatePenaltyContract = async (id: string, updates: Partial<Penalty
     ...updates,
     // Convert Date objects to strings for database storage
     last_check_date: updates.last_check_date?.toISOString(),
-    created_at: updates.created_at?.toISOString()
+    created_at: typeof updates.created_at === 'string' ? updates.created_at : updates.created_at?.toISOString()
   };
   const dbContract = await PenaltyContractsService.update(id, dbUpdates);
   return dbContract ? convertToDomainContract(dbContract) : null;
@@ -87,7 +87,7 @@ export const createPenaltyLog = async (logData: Omit<PenaltyLog, 'id' | 'charged
   const dbLog: DatabasePenaltyLog = {
     id: 'log_' + Date.now(),
     charged_at: new Date().toISOString(),
-    confirmed_at: logData.confirmed_at?.toISOString(),
+    confirmed_at: typeof logData.confirmed_at === 'string' ? logData.confirmed_at : logData.confirmed_at?.toISOString(),
     ...logData
   };
   
