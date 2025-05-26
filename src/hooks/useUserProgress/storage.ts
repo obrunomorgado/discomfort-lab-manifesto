@@ -19,7 +19,8 @@ export const loadProgress = (): UserProgress => {
         dailyActionsAssigned: test.dailyActionsAssigned?.map((action: any) => ({
           ...action,
           dueDate: new Date(action.dueDate)
-        }))
+        })),
+        nextScheduledDate: test.nextScheduledDate ? new Date(test.nextScheduledDate) : undefined
       })),
       badges: parsed.badges.map((badge: any) => ({
         ...badge,
@@ -44,7 +45,22 @@ export const loadProgress = (): UserProgress => {
       credits: parsed.credits !== undefined ? parsed.credits : 15,
       // Migração: adicionar username se não existir
       username: parsed.username || 'Recruta',
-      squadNotifications: parsed.squadNotifications || []
+      squadNotifications: parsed.squadNotifications || [],
+      // Migração: adicionar sistema médico se não existir
+      medicalProgress: {
+        currentTestNumber: parsed.medicalProgress?.currentTestNumber || parsed.testsCompleted?.filter((t: any) => t.testId === 'career-truth-ai').length || 0,
+        isBlocked: parsed.medicalProgress?.isBlocked || (parsed.testsCompleted?.filter((t: any) => t.testId === 'career-truth-ai').length >= 5),
+        canSuborn: parsed.medicalProgress?.canSuborn || (parsed.testsCompleted?.filter((t: any) => t.testId === 'career-truth-ai').length >= 5),
+        subornsUsed: parsed.medicalProgress?.subornsUsed || 0,
+        totalConsultations: parsed.medicalProgress?.totalConsultations || parsed.testsCompleted?.filter((t: any) => t.testId === 'career-truth-ai').length || 0,
+        isPatientCured: parsed.medicalProgress?.isPatientCured || false,
+        evolutionTrend: parsed.medicalProgress?.evolutionTrend || 'stable',
+        averageScore: parsed.medicalProgress?.averageScore || 
+          (parsed.testsCompleted?.filter((t: any) => t.testId === 'career-truth-ai').length > 0 ? 
+            parsed.testsCompleted.filter((t: any) => t.testId === 'career-truth-ai').reduce((sum: number, test: any) => sum + (test.overallScore || 50), 0) / 
+            parsed.testsCompleted.filter((t: any) => t.testId === 'career-truth-ai').length : 0),
+        nextAppointment: parsed.medicalProgress?.nextAppointment ? new Date(parsed.medicalProgress.nextAppointment) : undefined
+      }
     };
   } else {
     // Primeira vez - gerar código de referral

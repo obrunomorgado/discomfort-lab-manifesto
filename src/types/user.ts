@@ -4,7 +4,7 @@ export interface Badge {
   name: string;
   description: string;
   icon: string;
-  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral' | 'shame';
+  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral' | 'shame' | 'medical';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   unlockedAt?: Date;
   points: number;
@@ -12,7 +12,7 @@ export interface Badge {
 
 export interface CreditTransaction {
   id: string;
-  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus' | 'penalty' | 'bonus';
+  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus' | 'penalty' | 'bonus' | 'suborn';
   amount: number;
   description: string;
   timestamp: Date;
@@ -56,6 +56,11 @@ export interface TestResult {
   creditsSpent: number;
   debtPointsGenerated?: number;
   dailyActionsAssigned?: DailyAction[];
+  // New medical fields
+  overallScore?: number;
+  diagnosis?: import('./medical').MedicalDiagnosis;
+  testNumber?: number;
+  nextScheduledDate?: Date;
 }
 
 // Novas interfaces para o sistema de missões
@@ -66,7 +71,6 @@ export interface DailyMissionSelection {
   completed?: boolean;
   completedAt?: Date;
   pointsEarned?: number;
-  penaltyApplied?: number;
 }
 
 export interface DiscomfortChallenge {
@@ -81,6 +85,19 @@ export interface BettingEffect {
   envelope: any;
   selectedAt: Date;
   isActive: boolean;
+}
+
+// New medical progress interface
+export interface MedicalProgress {
+  currentTestNumber: number;
+  isBlocked: boolean;
+  canSuborn: boolean;
+  subornsUsed: number;
+  nextAppointment?: Date;
+  totalConsultations: number;
+  isPatientCured: boolean;
+  evolutionTrend: 'improving' | 'stable' | 'declining';
+  averageScore: number;
 }
 
 export interface UserProgress {
@@ -112,6 +129,9 @@ export interface UserProgress {
   currentSquadId?: string;
   squadNotifications: any[];
   username: string;
+  
+  // New medical system
+  medicalProgress: MedicalProgress;
 }
 
 export interface UserStats {
@@ -125,4 +145,8 @@ export interface UserStats {
   honestyScore: number;
   isInTreatment: boolean;
   daysInTreatment?: number;
+  // Medical stats
+  medicalEvolution?: number;
+  consultationsCompleted?: number;
+  averageDiagnosisScore?: number;
 }

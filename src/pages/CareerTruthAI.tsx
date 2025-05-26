@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { useCredits } from "@/hooks/useCredits";
 import { DailyAction, TestResult } from "@/types/user";
+import { generateMedicalDiagnosis, shouldScheduleNextTest } from "@/utils/medicalDiagnostic";
+import { subornDoctor } from "@/hooks/useUserProgress/tests";
 import Header from "@/components/CareerTruthAI/Header";
 import TreatmentStatus from "@/components/CareerTruthAI/TreatmentStatus";
 import CheckInSection from "@/components/CareerTruthAI/CheckInSection";
 import ConfessionForm from "@/components/CareerTruthAI/ConfessionForm";
 import DiagnosisResults from "@/components/CareerTruthAI/DiagnosisResults";
 import CalendarSync from "@/components/CareerTruthAI/CalendarSync";
+import MedicalHistory from "@/components/CareerTruthAI/MedicalHistory";
+import SubornModal from "@/components/CareerTruthAI/SubornModal";
+import { FileText, Calendar, DollarSign, Lock } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const CareerTruthAI = () => {
   const [userInput, setUserInput] = useState("");
@@ -16,12 +25,15 @@ const CareerTruthAI = () => {
   const [analysis, setAnalysis] = useState("");
   const [showCheckIn, setShowCheckIn] = useState(false);
   const [checkInMessage, setCheckInMessage] = useState("");
+  const [showMedicalHistory, setShowMedicalHistory] = useState(false);
+  const [showSubornModal, setShowSubornModal] = useState(false);
   
-  const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday, spendCredits } = useUserProgress();
+  const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday, spendCredits, saveProgress } = useUserProgress();
   const { getTestCost } = useCredits();
   
   const pendingActions = getPendingActions();
   const completedToday = getCompletedActionsToday();
+  const { medicalProgress } = progress;
 
   const generateDailyActions = (): DailyAction[] => {
     const baseActions = [
@@ -73,6 +85,12 @@ const CareerTruthAI = () => {
   const handleSubmit = async () => {
     if (!userInput.trim()) return;
     
+    // Check if blocked
+    if (medicalProgress.isBlocked) {
+      setCheckInMessage("❌ Consultório fechado! Você completou seus 5 testes. Use o suborno para continuar.");
+      return;
+    }
+    
     const testCost = getTestCost('career-truth-ai');
     
     // Verificar se tem créditos suficientes
@@ -93,6 +111,12 @@ const CareerTruthAI = () => {
     setTimeout(() => {
       const debtPoints = Math.floor(Math.random() * 201) + 150; // 150-350 pontos negativos
       const dailyActions = generateDailyActions();
+      const testNumber = medicalProgress.currentTestNumber + 1;
+      
+      // Generate medical diagnosis
+      const careerTests = progress.testsCompleted.filter(t => t.testId === 'career-truth-ai');
+      const diagnosis = generateMedicalDiagnosis(userInput, testNumber, careerTests);
+      const nextScheduledDate = shouldScheduleNextTest(testNumber);
       
       const testResult: TestResult = {
         testId: 'career-truth-ai',
@@ -108,38 +132,40 @@ const CareerTruthAI = () => {
         pointsEarned: 300,
         creditsSpent: testCost,
         debtPointsGenerated: debtPoints,
-        dailyActionsAssigned: dailyActions
+        dailyActionsAssigned: dailyActions,
+        overallScore: diagnosis.overallScore,
+        diagnosis: diagnosis,
+        testNumber: testNumber,
+        nextScheduledDate: nextScheduledDate
       };
 
       addTestResult(testResult);
 
-      setAnalysis(`🏥 <strong>DIAGNÓSTICO DE AUTOSSABOTAGEM PROFISSIONAL - EMERGÊNCIA MÉDICA</strong>
-
-<em>Dr. Desculpas ajusta os óculos e observa os resultados dos exames. O silêncio da sala é quebrado pelo bipe constante dos monitores...</em>
+      // Generate enhanced analysis with medical data
+      const analysisText = `${diagnosis.detailedAnalysis}
 
 ---
 
-<strong>"Paciente... temos um quadro grave aqui."</strong> <em>ele murmura, balançando a cabeça</em>
+📊 <strong>DADOS MÉDICOS DA CONSULTA #${testNumber}</strong>
 
-<strong>LAUDO MÉDICO - CASO #${Math.floor(Math.random() * 9999)}</strong>
+<strong>Score Diagnóstico:</strong> ${diagnosis.overallScore}/100
+<strong>Gravidade:</strong> ${diagnosis.severity.toUpperCase()}
+<strong>Próxima Consulta:</strong> ${nextScheduledDate ? format(nextScheduledDate, 'dd/MM/yyyy', { locale: ptBR }) : 'BLOQUEADO APÓS 5 CONSULTAS'}
 
-🚨 <strong>DIAGNÓSTICO CONFIRMADO: AUTOSSABOTAGEM PROFISSIONAL CRÔNICA</strong>
+---
 
-<strong>PONTOS DE DÍVIDA GERADOS: -${debtPoints} pontos</strong>
+💊 <strong>ÁREAS PARA MELHORIA:</strong>
+${diagnosis.improvementAreas.map(area => `• ${area}`).join('\n')}
 
-<em>O Dr. se vira para você com expressão séria.</em>
+🏆 <strong>PONTOS FORTES IDENTIFICADOS:</strong>
+${diagnosis.strengths.map(strength => `• ${strength}`).join('\n')}
 
-<strong>"Você acumulou uma dívida de ${debtPoints} pontos de autossabotagem. Cada comportamento destrutivo tem um preço, e agora você vai pagar com AÇÕES."</strong>
+📋 <strong>RECOMENDAÇÕES MÉDICAS:</strong>
+${diagnosis.recommendations.map(rec => `• ${rec}`).join('\n')}
 
 ---
 
 ⚡ <strong>PROTOCOLO DE REABILITAÇÃO ATIVADO:</strong>
-
-<em>Dr. Desculpas pega uma prancheta médica e começa a prescrever o tratamento.</em>
-
-<strong>"Escute bem: Você está oficialmente em TRATAMENTO. Cada ação que você completar vai reduzir sua dívida. Quando chegar a ZERO, você recebe alta médica."</strong>
-
-📋 <strong>SUAS PRESCRIÇÕES DIÁRIAS:</strong>
 
 ${dailyActions.map((action, index) => 
   `<strong>${index + 1}.</strong> ${action.description} <em>(+${action.points} pontos)</em>`
@@ -149,24 +175,17 @@ ${dailyActions.map((action, index) =>
 
 💊 <strong>INSTRUÇÕES DE TRATAMENTO:</strong>
 
-<em>O médico olha diretamente nos seus olhos.</em>
-
 <strong>"TODOS OS DIAS você deve fazer check-in aqui. Relatar o que completou. Sem desculpas, sem exceções."</strong>
 
-🔥 <strong>"Se você falhar por mais de 24h, sua dívida AUMENTA. Se você completar tudo consistentemente, ganha badges de recuperação."</strong>
+${testNumber >= 5 ? 
+  `🚨 <strong>"ATENÇÃO: Esta foi sua 5ª e ÚLTIMA consulta gratuita. Consultório oficialmente FECHADO para seu caso. Se deseja continuar o tratamento... bem, temos algumas opções especiais."</strong>` :
+  `🔥 <strong>"Se você falhar por mais de 24h, sua dívida AUMENTA. Complete tudo consistentemente para ganhar badges de recuperação."</strong>`
+}
 
-⚕️ <strong>"Quando zerar sua dívida, você recebe ALTA MÉDICA e a badge 'Curado da Autossabotagem'."</strong>
+${testNumber < 5 ? `⚕️ <strong>"Retorno agendado para ${format(nextScheduledDate!, 'dd/MM/yyyy', { locale: ptBR })}. Não falte."</strong>` : ''}
+      `;
 
----
-
-<em>Dr. Desculpas estende a receita médica.</em>
-
-<strong>"O tratamento começa AGORA. Primeiro check-in deve ser amanhã. Sem exceções."</strong>
-
-<em>O som dos monitores ecoa na sala...</em>
-
-<strong>"Você vai se curar da autossabotagem ou vai continuar sendo um paciente crônico?"</strong>
-      `);
+      setAnalysis(analysisText);
       setIsAnalyzing(false);
       setShowCheckIn(true);
     }, 4000);
@@ -184,10 +203,78 @@ ${dailyActions.map((action, index) =>
     setCheckInMessage(`✅ Check-in realizado! ${newBadges.length > 0 ? `Novas badges: ${newBadges.map(b => b.name).join(', ')}` : ''}`);
   };
 
+  const handleSuborn = (subornOption: any) => {
+    const result = subornDoctor(progress, subornOption);
+    if (result.success) {
+      saveProgress(result.newProgress);
+      setCheckInMessage(`💰 Suborno aceito! Dr. Desculpas sussurra: "Nosso segredinho..." - ${subornOption.unlocks} novas consultas liberadas.`);
+    }
+  };
+
   return (
     <div className="min-h-screen py-16 px-4 bg-gradient-to-b from-dark-bg to-dark-bg/90">
       <div className="max-w-4xl mx-auto">
         <Header isInTreatment={progress.isInTreatment} />
+        
+        {/* Medical Status Bar */}
+        <div className="bg-dark-card/50 border border-warm-yellow/20 rounded-lg p-4 mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center space-x-4">
+              <Badge className="bg-warm-yellow/20 text-warm-yellow font-bebas">
+                CONSULTA {medicalProgress.currentTestNumber + 1}/5
+              </Badge>
+              <div className="text-sm text-warm-gray/70">
+                Score Médio: <span className="text-warm-yellow font-bebas">{Math.round(medicalProgress.averageScore)}/100</span>
+              </div>
+              <div className="text-sm text-warm-gray/70">
+                Tendência: <span className={`font-bebas ${
+                  medicalProgress.evolutionTrend === 'improving' ? 'text-green-400' :
+                  medicalProgress.evolutionTrend === 'declining' ? 'text-red-400' : 'text-yellow-400'
+                }`}>
+                  {medicalProgress.evolutionTrend === 'improving' ? 'MELHORANDO' :
+                   medicalProgress.evolutionTrend === 'declining' ? 'PIORANDO' : 'ESTÁVEL'}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => setShowMedicalHistory(true)}
+                variant="outline"
+                size="sm"
+                className="border-warm-yellow/50 text-warm-yellow hover:bg-warm-yellow/20 font-bebas"
+              >
+                <FileText size={16} className="mr-2" />
+                PRONTUÁRIO
+              </Button>
+              
+              {medicalProgress.nextAppointment && !medicalProgress.isBlocked && (
+                <div className="flex items-center space-x-2 text-sm text-warm-gray/70">
+                  <Calendar size={16} className="text-warm-yellow" />
+                  <span>Próxima: {format(medicalProgress.nextAppointment, 'dd/MM', { locale: ptBR })}</span>
+                </div>
+              )}
+              
+              {medicalProgress.isBlocked && medicalProgress.canSuborn && (
+                <Button
+                  onClick={() => setShowSubornModal(true)}
+                  size="sm"
+                  className="bg-red-600/20 border border-red-500/50 text-red-400 hover:bg-red-600/30 font-bebas"
+                >
+                  <DollarSign size={16} className="mr-2" />
+                  SUBORNO
+                </Button>
+              )}
+              
+              {medicalProgress.isBlocked && !medicalProgress.canSuborn && (
+                <Badge className="bg-green-600/20 text-green-400 font-bebas">
+                  <Lock size={16} className="mr-2" />
+                  CURADO
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
         
         <TreatmentStatus progress={progress} />
         
@@ -226,12 +313,27 @@ ${dailyActions.map((action, index) =>
                 <strong className="text-red-400">Aviso Médico:</strong>
                 <p className="mt-1">
                   "Este não é coaching motivacional. É tratamento médico para autossabotagem crônica. 
-                  Falhas no tratamento resultam em agravamento do quadro."
+                  Falhas no tratamento resultam em agravamento do quadro. 
+                  {medicalProgress.isBlocked && ' Sistema bloqueado após 5 consultas - opções de suborno disponíveis.'}"
                 </p>
               </div>
             </div>
           </AlertDescription>
         </Alert>
+
+        {/* Modals */}
+        <MedicalHistory
+          progress={progress}
+          isOpen={showMedicalHistory}
+          onClose={() => setShowMedicalHistory(false)}
+        />
+
+        <SubornModal
+          isOpen={showSubornModal}
+          onClose={() => setShowSubornModal(false)}
+          onSuborn={handleSuborn}
+          subornsUsed={medicalProgress.subornsUsed}
+        />
       </div>
     </div>
   );

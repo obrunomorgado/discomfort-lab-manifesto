@@ -1,7 +1,7 @@
-
 import { Badge } from '@/types/user';
 
-export const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
+export const AVAILABLE_BADGES: Badge[] = [
+  // Completion badges
   {
     id: 'first-test',
     name: 'Primeira Batalha',
@@ -21,9 +21,9 @@ export const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
     points: 300
   },
   {
-    id: 'career-warrior',
-    name: 'Guerreiro da Carreira',
-    description: 'Completou o CareerTruthAI',
+    id: 'excuse-destroyer',
+    name: 'Destruidor de Autossabotagem',
+    description: 'Completou o Sem Desculpas IA',
     icon: '💼',
     category: 'completion',
     rarity: 'rare',
@@ -38,67 +38,125 @@ export const BADGES_DEFINITIONS: Omit<Badge, 'unlockedAt'>[] = [
     rarity: 'epic',
     points: 500
   },
+
+  // Medical badges
+  {
+    id: 'patient-discipline',
+    name: 'Paciente Disciplinado',
+    description: 'Nunca perdeu uma consulta agendada',
+    icon: '🏥',
+    category: 'medical',
+    rarity: 'rare',
+    points: 400
+  },
+  {
+    id: 'meteoric-evolution',
+    name: 'Evolução Meteórica',
+    description: 'Melhorou 50+ pontos entre consultas',
+    icon: '🚀',
+    category: 'medical',
+    rarity: 'epic',
+    points: 600
+  },
+  {
+    id: 'officially-cured',
+    name: 'Curado Oficial',
+    description: 'Completou os 5 testes com sucesso',
+    icon: '🎓',
+    category: 'medical',
+    rarity: 'legendary',
+    points: 1000
+  },
+  {
+    id: 'first-suborn',
+    name: 'Primeiro Suborno',
+    description: 'Subornado Dr. Desculpas pela primeira vez',
+    icon: '💰',
+    category: 'medical',
+    rarity: 'rare',
+    points: 50
+  },
+  {
+    id: 'chronic-suborner',
+    name: 'Subornador Crônico',
+    description: 'Subornado Dr. Desculpas múltiplas vezes',
+    icon: '🤑',
+    category: 'medical',
+    rarity: 'legendary',
+    points: 200
+  },
+  {
+    id: 'medical-improvement',
+    name: 'Em Recuperação',
+    description: 'Score médico melhorou consistentemente',
+    icon: '📈',
+    category: 'medical',
+    rarity: 'epic',
+    points: 500
+  },
+
+  // Existing badges...
+  {
+    id: 'test-master',
+    name: 'Mestre dos Testes',
+    description: 'Completou todos os testes disponíveis',
+    icon: '👑',
+    category: 'completion',
+    rarity: 'legendary',
+    points: 1000
+  },
   {
     id: 'honest-soul',
     name: 'Alma Honesta',
-    description: 'Mantém score de honestidade acima de 8.0',
+    description: 'Manteve honestidade média acima de 8.0',
     icon: '💎',
     category: 'honesty',
     rarity: 'epic',
     points: 400
   },
   {
-    id: 'streak-warrior',
-    name: 'Guerreiro Consistente',
-    description: '7 dias consecutivos de check-in',
-    icon: '🔥',
-    category: 'consistency',
-    rarity: 'rare',
-    points: 250
-  },
-  {
-    id: 'legend',
-    name: 'Lenda do Desconforto',
-    description: 'Completou todos os testes disponíveis',
-    icon: '👑',
-    category: 'special',
-    rarity: 'legendary',
-    points: 1000
-  },
-  {
-    id: 'recovered',
-    name: 'Curado da Autossabotagem',
-    description: 'Conseguiu alta médica - zerou pontos negativos',
-    icon: '🏥',
-    category: 'recovery',
-    rarity: 'legendary',
-    points: 2000
-  },
-  {
-    id: 'disciplined',
-    name: 'Disciplina de Ferro',
-    description: '30 dias consecutivos de check-in',
-    icon: '⚔️',
+    id: 'recovery-hero',
+    name: 'Herói da Recuperação',
+    description: 'Zerou pontos de dívida completamente',
+    icon: '🦸',
     category: 'recovery',
     rarity: 'epic',
+    points: 500
+  },
+  {
+    id: 'consistency-king',
+    name: 'Rei da Consistência',
+    description: 'Check-in diário por 30 dias consecutivos',
+    icon: '👑',
+    category: 'consistency',
+    rarity: 'legendary',
     points: 800
   },
   {
-    id: 'commitment',
-    name: 'Compromisso Total',
-    description: '7 dias consecutivos completando todas as ações',
-    icon: '🎖️',
-    category: 'recovery',
-    rarity: 'rare',
-    points: 400
+    id: 'payment-supporter',
+    name: 'Apoiador',
+    description: 'Realizou primeira compra de créditos',
+    icon: '💳',
+    category: 'payment',
+    rarity: 'common',
+    points: 100
   },
   {
-    id: 'shame-duck',
-    name: 'Patinho da Vergonha',
-    description: '3 falhas consecutivas em missões - precisa de redenção',
-    icon: '🐥',
+    id: 'referral-master',
+    name: 'Mestre dos Convites',
+    description: 'Convidou 5+ pessoas com sucesso',
+    icon: '📢',
+    category: 'referral',
+    rarity: 'rare',
+    points: 300
+  },
+  {
+    id: 'shame-survivor',
+    name: 'Sobrevivente da Vergonha',
+    description: 'Superou momento de grande vergonha',
+    icon: '😤',
     category: 'shame',
-    rarity: 'common',
-    points: -100
+    rarity: 'epic',
+    points: 600
   }
 ];

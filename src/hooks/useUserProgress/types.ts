@@ -24,5 +24,16 @@ export const INITIAL_PROGRESS: UserProgress = {
   missionsCompleted: [],
   discomfortChallengesCompleted: [],
   squadNotifications: [],
-  username: 'Recruta'
+  username: 'Recruta',
+  // Initialize medical progress
+  medicalProgress: {
+    currentTestNumber: 0,
+    isBlocked: false,
+    canSuborn: false,
+    subornsUsed: 0,
+    totalConsultations: 0,
+    isPatientCured: false,
+    evolutionTrend: 'stable',
+    averageScore: 0
+  }
 };
