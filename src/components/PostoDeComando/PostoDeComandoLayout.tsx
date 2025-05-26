@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserProgress, DailyAction } from '@/types/user';
 import { Squad } from '@/types/squad';
@@ -19,6 +18,9 @@ import PotLink from '@/components/Squad/PotLink';
 import OperationHistory from '@/components/PostoDeComando/OperationHistory';
 import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
 import SquadChat from '@/components/Squad/SquadChat';
+import StreamDaVergonha from '@/components/Squad/StreamDaVergonha';
+import StickerSystem from '@/components/Squad/StickerSystem';
+import Desafio72h from '@/components/Squad/Desafio72h';
 
 interface PostoDeComandoLayoutProps {
   progress: UserProgress;
@@ -100,6 +102,20 @@ const PostoDeComandoLayout = ({
                   <PotLink />
                 </div>
               )}
+
+              {/* New Advanced Features Section */}
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bebas text-cyber-fuchsia cyber-glow mb-4">
+                  🔥 ADVANCED FEATURES
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <StreamDaVergonha />
+                  <StickerSystem />
+                </div>
+                
+                <Desafio72h />
+              </div>
             </div>
 
             <QuickActions
