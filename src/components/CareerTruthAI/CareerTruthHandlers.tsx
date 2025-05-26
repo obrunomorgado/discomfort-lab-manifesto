@@ -53,7 +53,7 @@ export const useCareerTruthHandlers = () => {
 
   const { handleActionComplete, handleDailyCheckIn } = createActionHandlers(
     completeAction,
-    performDailyCheckIn,
+    async () => await performDailyCheckIn(), // Make this async to handle Promise<Badge[]>
     setCheckInMessage
   );
 

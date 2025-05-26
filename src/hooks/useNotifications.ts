@@ -109,7 +109,7 @@ export const useNotifications = () => {
           {
             title: '🎯 SALA DO DESCONFORTO',
             body: 'Hora do check-in diário, soldado! Dr. Desculpas está esperando.',
-            id: 1001,
+            id: 1001, // Change from string to number
             schedule: { at: nextCheckInTime },
             sound: 'beep.wav',
             attachments: [],
@@ -136,7 +136,7 @@ export const useNotifications = () => {
           {
             title: '💸 PENALIDADE ATIVA',
             body: `Sua tarefa diária: "${contract.daily_task}". Falha = R$ ${(contract.penalty_amount / 100).toFixed(2)}`,
-            id: 2001,
+            id: 2001, // Change from string to number
             schedule: { at: tomorrow },
             sound: 'beep.wav',
             attachments: [],
@@ -167,7 +167,7 @@ export const useNotifications = () => {
             {
               title: '🚨 CONSULTA DE EMERGÊNCIA',
               body: `Sua dívida está alta (${progress.debtPoints} pontos). Considere uma consulta de emergência.`,
-              id: 3001,
+              id: 3001, // Change from string to number
               schedule: { at: reminderTime },
               sound: 'beep.wav',
               attachments: [],
@@ -205,7 +205,7 @@ export const useNotifications = () => {
           {
             title: '🌅 BOM DIA, SOLDADO!',
             body: randomMessage,
-            id: 4001,
+            id: 4001, // Change from string to number
             schedule: { at: tomorrow },
             sound: 'beep.wav',
             attachments: [],
@@ -225,10 +225,10 @@ export const useNotifications = () => {
     try {
       await LocalNotifications.cancel({
         notifications: [
-          { id: '1001' },
-          { id: '2001' },
-          { id: '3001' },
-          { id: '4001' }
+          { id: 1001 }, // Change from string to number
+          { id: 2001 }, // Change from string to number
+          { id: 3001 }, // Change from string to number
+          { id: 4001 }  // Change from string to number
         ]
       });
     } catch (error) {
