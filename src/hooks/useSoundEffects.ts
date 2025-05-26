@@ -1,5 +1,6 @@
 
 import { useCallback } from 'react';
+import { useAudioSettings } from './useAudioSettings';
 
 type SoundType = 
   | 'mission_success' 
@@ -68,7 +69,12 @@ const SOUND_CONFIGS: Record<SoundType, SoundConfig[]> = {
 };
 
 export const useSoundEffects = () => {
+  const { settings } = useAudioSettings();
+
   const playSound = useCallback((soundType: SoundType) => {
+    // Check if sound is enabled before playing
+    if (!settings.soundEnabled) return;
+
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const configs = SOUND_CONFIGS[soundType];
@@ -95,7 +101,7 @@ export const useSoundEffects = () => {
     } catch (error) {
       console.log('Sound effects not supported in this browser');
     }
-  }, []);
+  }, [settings.soundEnabled]);
 
   return { playSound };
 };
