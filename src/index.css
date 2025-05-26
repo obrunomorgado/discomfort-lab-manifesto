@@ -15,6 +15,29 @@
 }
 
 @layer components {
+  /* Mobile-specific classes */
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-pl {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-area-pr {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Mobile touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
   /* Card base style */
   .card-base {
     @apply rounded-2xl bg-military-card border-2 border-military-border shadow-2xl rivet-border;
@@ -62,6 +85,17 @@
       rgba(0, 255, 65, 0.02) 2px,
       rgba(0, 255, 65, 0.02) 4px
     );
+  }
+
+  /* Mobile responsive improvements */
+  @media (max-width: 768px) {
+    .card-base {
+      @apply mx-4 rounded-xl;
+    }
+    
+    .mobile-full-width {
+      @apply w-full mx-0 rounded-lg;
+    }
   }
 }
 
