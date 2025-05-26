@@ -1,330 +1,85 @@
+
+import React from 'react';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { usePenaltyContract } from '@/hooks/usePenaltyContract';
 import { useSquad } from '@/hooks/useSquad';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import PenaltyStatusChip from '@/components/SkinInTheGame/PenaltyStatusChip';
-import PenaltySetupModal from '@/components/SkinInTheGame/PenaltySetupModal';
-import PenaltyManagement from '@/components/SkinInTheGame/PenaltyManagement';
-import MissionSelector from '@/components/PostoDeComando/MissionSelector';
-import DailyReportModal from '@/components/PostoDeComando/DailyReportModal';
-import DiscomfortCard from '@/components/PostoDeComando/DiscomfortCard';
-import BettingMachine from '@/components/PostoDeComando/BettingMachine';
-import CommandHeader from '@/components/PostoDeComando/CommandHeader';
-import CombatResources from '@/components/PostoDeComando/CombatResources';
-import DrNicotineSection from '@/components/PostoDeComando/DrNicotineSection';
-import CombatStatus from '@/components/PostoDeComando/CombatStatus';
-import IntelSection from '@/components/PostoDeComando/IntelSection';
-import QuickActions from '@/components/PostoDeComando/QuickActions';
-import RecruitData from '@/components/PostoDeComando/RecruitData';
-import OperationHistory from '@/components/PostoDeComando/OperationHistory';
-import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
-import SquadManagement from '@/components/Squad/SquadManagement';
-import PotLink from '@/components/Squad/PotLink';
-import SquadChat from '@/components/Squad/SquadChat';
-import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { useMissionHandlers } from '@/hooks/useMissionHandlers';
+import { useModalStates } from '@/hooks/useModalStates';
+import PostoDeComandoLayout from '@/components/PostoDeComando/PostoDeComandoLayout';
+import PostoDeComandoModals from '@/components/PostoDeComando/PostoDeComandoModals';
 
 const PostoDeComando = () => {
-  const { progress, getStats, getPendingActions, saveProgress, applyMissionResult } = useUserProgress();
+  const { progress, getStats, getPendingActions } = useUserProgress();
   const { activeContract } = usePenaltyContract();
-  const { getSquadByUserId, reportMissionSuccess, reportMissionStart } = useSquad();
-  const { toast } = useToast();
-  const { playSound } = useSoundEffects();
-  const [showPenaltySetup, setShowPenaltySetup] = useState(false);
-  const [showPenaltyManagement, setShowPenaltyManagement] = useState(false);
-  const [showMissionSelector, setShowMissionSelector] = useState(false);
-  const [showDailyReport, setShowDailyReport] = useState(false);
-  const [showDiscomfortCard, setShowDiscomfortCard] = useState(false);
-  const [showBettingMachine, setShowBettingMachine] = useState(false);
-  const [showSquadManagement, setShowSquadManagement] = useState(false);
-  const [showPotLink, setShowPotLink] = useState(false);
-  const [showSquadChat, setShowSquadChat] = useState(false);
+  const { getSquadByUserId } = useSquad();
+  const {
+    handleMissionSelect,
+    handleMissionReport,
+    handleDiscomfortAccept,
+    handleBettingSelect
+  } = useMissionHandlers();
+  
+  const {
+    showPenaltySetup,
+    setShowPenaltySetup,
+    showPenaltyManagement,
+    setShowPenaltyManagement,
+    showMissionSelector,
+    setShowMissionSelector,
+    showDailyReport,
+    setShowDailyReport,
+    showDiscomfortCard,
+    setShowDiscomfortCard,
+    showBettingMachine,
+    setShowBettingMachine,
+    showSquadChat,
+    setShowSquadChat
+  } = useModalStates();
   
   const stats = getStats();
   const pendingActions = getPendingActions();
   const userSquad = getSquadByUserId('current-user');
 
-  const handleMissionSelect = (mission: any, isDoubled: boolean) => {
-    const newProgress = { ...progress };
-    newProgress.currentMission = {
-      selectedMission: mission,
-      isDoubled,
-      selectedAt: new Date()
-    };
-    newProgress.lastActivity = new Date();
-    saveProgress(newProgress);
+  const handleMissionSelectWithClose = (mission: any, isDoubled: boolean) => {
+    handleMissionSelect(mission, isDoubled);
     setShowMissionSelector(false);
-
-    // Play button click sound
-    playSound('button_click');
-
-    // Reportar início da missão no chat do squad
-    if (userSquad) {
-      reportMissionStart(userSquad.id, progress.username || 'Recruta', mission.title);
-    }
-  };
-
-  const handleMissionReport = (success: boolean) => {
-    if (!progress.currentMission) return;
-
-    const newProgress = { ...progress };
-    const mission = progress.currentMission;
-    
-    if (success) {
-      const basePoints = mission.selectedMission.basePoints;
-      const earnedPoints = mission.isDoubled ? basePoints * 2 : basePoints;
-      
-      // Aplicar efeito de aposta se ativo
-      const finalPoints = progress.currentBettingEffect?.envelope.effect === 'bonus_points' 
-        ? Math.floor(earnedPoints * progress.currentBettingEffect.envelope.value)
-        : earnedPoints;
-      
-      newProgress.totalPoints += finalPoints;
-      mission.pointsEarned = finalPoints;
-      mission.completed = true;
-      mission.completedAt = new Date();
-
-      // Play mission success sound
-      playSound('mission_success');
-      
-      // Play XP gained sound after a delay
-      setTimeout(() => playSound('xp_gained'), 500);
-
-      // Reportar sucesso no chat do squad
-      if (userSquad) {
-        reportMissionSuccess(userSquad.id, progress.username || 'Recruta', mission.selectedMission.title);
-      }
-    } else {
-      const basePenalty = 5;
-      let penalty = mission.isDoubled ? basePenalty * 2 : basePenalty;
-      
-      // Aplicar efeito de aposta se ativo
-      if (progress.currentBettingEffect?.envelope.effect === 'penalty_increase') {
-        penalty *= progress.currentBettingEffect.envelope.value;
-      }
-      
-      newProgress.credits = Math.max(0, newProgress.credits - penalty);
-      mission.penaltyApplied = penalty;
-      mission.completed = false;
-      mission.completedAt = new Date();
-      
-      // Play mission failure sound
-      playSound('mission_failure');
-      
-      // Play penalty sound after a delay
-      setTimeout(() => playSound('penalty_applied'), 700);
-      
-      // Adicionar transação de penalidade
-      const transaction = {
-        id: `mission-penalty-${Date.now()}`,
-        type: 'penalty' as const,
-        amount: -penalty,
-        description: `Falha na missão: ${mission.selectedMission.title}`,
-        timestamp: new Date()
-      };
-      newProgress.creditTransactions.push(transaction);
-    }
-
-    // Mover missão para histórico
-    newProgress.missionsCompleted.push(mission);
-    newProgress.currentMission = undefined;
-    newProgress.lastActivity = new Date();
-    
-    saveProgress(newProgress);
-    
-    // Aplicar sistema de badges de vergonha
-    const { newBadges, removedBadges } = applyMissionResult(mission.selectedMission.id, success);
-    
-    // Mostrar notificações para badges
-    if (newBadges.length > 0) {
-      newBadges.forEach(badge => {
-        if (badge.id === 'shame-duck') {
-          toast({
-            title: "🐥 BADGE DE VERGONHA APLICADO!",
-            description: "3 falhas consecutivas. Complete uma missão para redenção.",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: `🏆 Badge Desbloqueado!`,
-            description: `${badge.name}: ${badge.description}`,
-          });
-        }
-      });
-    }
-    
-    if (removedBadges.length > 0) {
-      removedBadges.forEach(badgeId => {
-        if (badgeId === 'shame-duck') {
-          toast({
-            title: "🎉 REDENÇÃO CONQUISTADA!",
-            description: "Badge de Vergonha removido com sucesso!",
-          });
-        }
-      });
-    }
-  };
-
-  const handleDiscomfortAccept = (card: any) => {
-    const newProgress = { ...progress };
-    newProgress.currentDiscomfortChallenge = {
-      card,
-      acceptedAt: new Date()
-    };
-    saveProgress(newProgress);
-    setShowDiscomfortCard(false);
-    
-    // Play button click sound
-    playSound('button_click');
-  };
-
-  const handleBettingSelect = (envelope: any) => {
-    const newProgress = { ...progress };
-    newProgress.currentBettingEffect = {
-      envelope,
-      selectedAt: new Date(),
-      isActive: true
-    };
-    saveProgress(newProgress);
-    setShowBettingMachine(false);
-    
-    // Play button click sound
-    playSound('button_click');
   };
 
   return (
-    <div className="min-h-screen bg-military-bg py-8 px-4 scanline-overlay">
-      <div className="max-w-7xl mx-auto">
-        {/* Military Command Header */}
-        <CommandHeader progress={progress} pendingActionsCount={pendingActions.length} />
+    <>
+      <PostoDeComandoLayout
+        progress={progress}
+        stats={stats}
+        pendingActions={pendingActions}
+        userSquad={userSquad}
+        activeContract={activeContract}
+        showSquadChat={showSquadChat}
+        setShowSquadChat={setShowSquadChat}
+        onMissionSelect={handleMissionSelectWithClose}
+        onShowDailyReport={() => setShowDailyReport(true)}
+        onShowMissionSelector={() => setShowMissionSelector(true)}
+        onShowBettingMachine={() => setShowBettingMachine(true)}
+        onShowPenaltySetup={() => setShowPenaltySetup(true)}
+        onShowPenaltyManagement={() => setShowPenaltyManagement(true)}
+      />
 
-        {/* Main Content */}
-        <div className="bg-military-card rounded-lg border-2 border-cyber-fuchsia/30 shadow-2xl mb-8 cyber-glow rivet-border">
-          {/* Combat Resources */}
-          <CombatResources progress={progress} stats={stats} />
-
-          {/* Dr. Nicotine Communication */}
-          <DrNicotineSection progress={progress} pendingActions={pendingActions} />
-
-          {/* Penalty Status */}
-          <div className="p-6 border-b border-military-border">
-            <PenaltyStatusChip 
-              contract={activeContract}
-              onManage={() => setShowPenaltyManagement(true)}
-            />
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Combat Status */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Mission Selector */}
-            {!progress.currentMission && (
-              <MissionSelector 
-                onMissionSelect={handleMissionSelect}
-                selectedMission={progress.currentMission?.selectedMission}
-                isDoubled={progress.currentMission?.isDoubled}
-              />
-            )}
-
-            {/* Combat Status */}
-            <CombatStatus 
-              progress={progress} 
-              pendingActions={pendingActions} 
-              onShowDailyReport={() => setShowDailyReport(true)} 
-            />
-
-            {/* Intel de Missão */}
-            <IntelSection progress={progress} stats={stats} />
-
-            {/* Squad Management */}
-            <SquadManagement />
-
-            {/* Ordens Imediatas */}
-            <QuickActions
-              progress={progress}
-              activeContract={activeContract}
-              onShowMissionSelector={() => setShowMissionSelector(true)}
-              onShowDailyReport={() => setShowDailyReport(true)}
-              onShowBettingMachine={() => setShowBettingMachine(true)}
-              onShowPenaltySetup={() => setShowPenaltySetup(true)}
-              onShowPenaltyManagement={() => setShowPenaltyManagement(true)}
-            />
-          </div>
-
-          {/* Right Column - Recruta Data */}
-          <div className="space-y-6">
-            {/* Dados do Recruta */}
-            <RecruitData progress={progress} />
-
-            {/* Link do Pot */}
-            <PotLink />
-
-            {/* Histórico de Operações */}
-            <OperationHistory progress={progress} />
-
-            {/* Agenda de Operações */}
-            <OperationSchedule progress={progress} pendingActions={pendingActions} />
-          </div>
-        </div>
-
-        {/* Squad Chat - Só aparece se estiver em um squad */}
-        {userSquad && (
-          <SquadChat 
-            squadId={userSquad.id}
-            isOpen={showSquadChat}
-            onToggle={() => setShowSquadChat(!showSquadChat)}
-          />
-        )}
-
-        {/* Modals */}
-        <PenaltySetupModal 
-          isOpen={showPenaltySetup}
-          onClose={() => setShowPenaltySetup(false)}
-        />
-
-        <DailyReportModal 
-          isOpen={showDailyReport}
-          onClose={() => setShowDailyReport(false)}
-          mission={progress.currentMission}
-          onReport={handleMissionReport}
-        />
-
-        <DiscomfortCard 
-          onAccept={handleDiscomfortAccept}
-          onDismiss={() => setShowDiscomfortCard(false)}
-        />
-
-        <BettingMachine 
-          isOpen={showBettingMachine}
-          onClose={() => setShowBettingMachine(false)}
-          onEnvelopeSelect={handleBettingSelect}
-        />
-
-        {/* Penalty Management Modal */}
-        {showPenaltyManagement && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-            <div className="bg-military-card border border-cyber-fuchsia/30 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto rivet-border">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bebas text-cyber-fuchsia">GERENCIAR PENALIDADES</h2>
-                  <Button 
-                    onClick={() => setShowPenaltyManagement(false)}
-                    variant="outline"
-                    size="sm"
-                    className="border-military-border text-warm-gray hover:bg-military-border/20"
-                  >
-                    FECHAR
-                  </Button>
-                </div>
-                <PenaltyManagement />
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      <PostoDeComandoModals
+        progress={progress}
+        showPenaltySetup={showPenaltySetup}
+        setShowPenaltySetup={setShowPenaltySetup}
+        showPenaltyManagement={showPenaltyManagement}
+        setShowPenaltyManagement={setShowPenaltyManagement}
+        showDailyReport={showDailyReport}
+        setShowDailyReport={setShowDailyReport}
+        showDiscomfortCard={showDiscomfortCard}
+        setShowDiscomfortCard={setShowDiscomfortCard}
+        showBettingMachine={showBettingMachine}
+        setShowBettingMachine={setShowBettingMachine}
+        onMissionReport={handleMissionReport}
+        onDiscomfortAccept={handleDiscomfortAccept}
+        onBettingSelect={handleBettingSelect}
+      />
+    </>
   );
 };
 

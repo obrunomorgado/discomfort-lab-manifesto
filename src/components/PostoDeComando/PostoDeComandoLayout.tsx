@@ -1,0 +1,119 @@
+
+import React from 'react';
+import { UserProgress, DailyAction } from '@/types/user';
+import { Squad } from '@/types/squad';
+import { PenaltyContract } from '@/types/penalty';
+import CommandHeader from '@/components/PostoDeComando/CommandHeader';
+import CombatResources from '@/components/PostoDeComando/CombatResources';
+import DrNicotineSection from '@/components/PostoDeComando/DrNicotineSection';
+import PenaltyStatusChip from '@/components/SkinInTheGame/PenaltyStatusChip';
+import MissionSelector from '@/components/PostoDeComando/MissionSelector';
+import CombatStatus from '@/components/PostoDeComando/CombatStatus';
+import IntelSection from '@/components/PostoDeComando/IntelSection';
+import SquadManagement from '@/components/Squad/SquadManagement';
+import QuickActions from '@/components/PostoDeComando/QuickActions';
+import RecruitData from '@/components/PostoDeComando/RecruitData';
+import PotLink from '@/components/Squad/PotLink';
+import OperationHistory from '@/components/PostoDeComando/OperationHistory';
+import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
+import SquadChat from '@/components/Squad/SquadChat';
+
+interface PostoDeComandoLayoutProps {
+  progress: UserProgress;
+  stats: any;
+  pendingActions: DailyAction[];
+  userSquad: Squad | null;
+  activeContract: PenaltyContract | null;
+  showSquadChat: boolean;
+  setShowSquadChat: (show: boolean) => void;
+  onMissionSelect: (mission: any, isDoubled: boolean) => void;
+  onShowDailyReport: () => void;
+  onShowMissionSelector: () => void;
+  onShowBettingMachine: () => void;
+  onShowPenaltySetup: () => void;
+  onShowPenaltyManagement: () => void;
+}
+
+const PostoDeComandoLayout = ({
+  progress,
+  stats,
+  pendingActions,
+  userSquad,
+  activeContract,
+  showSquadChat,
+  setShowSquadChat,
+  onMissionSelect,
+  onShowDailyReport,
+  onShowMissionSelector,
+  onShowBettingMachine,
+  onShowPenaltySetup,
+  onShowPenaltyManagement
+}: PostoDeComandoLayoutProps) => {
+  return (
+    <div className="min-h-screen bg-military-bg py-8 px-4 scanline-overlay">
+      <div className="max-w-7xl mx-auto">
+        <CommandHeader progress={progress} pendingActionsCount={pendingActions.length} />
+
+        <div className="bg-military-card rounded-lg border-2 border-cyber-fuchsia/30 shadow-2xl mb-8 cyber-glow rivet-border">
+          <CombatResources progress={progress} stats={stats} />
+          <DrNicotineSection progress={progress} pendingActions={pendingActions} />
+          
+          <div className="p-6 border-b border-military-border">
+            <PenaltyStatusChip 
+              contract={activeContract}
+              onManage={onShowPenaltyManagement}
+            />
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            {!progress.currentMission && (
+              <MissionSelector 
+                onMissionSelect={onMissionSelect}
+                selectedMission={progress.currentMission?.selectedMission}
+                isDoubled={progress.currentMission?.isDoubled}
+              />
+            )}
+
+            <CombatStatus 
+              progress={progress} 
+              pendingActions={pendingActions} 
+              onShowDailyReport={onShowDailyReport} 
+            />
+
+            <IntelSection progress={progress} stats={stats} />
+            <SquadManagement />
+
+            <QuickActions
+              progress={progress}
+              activeContract={activeContract}
+              onShowMissionSelector={onShowMissionSelector}
+              onShowDailyReport={onShowDailyReport}
+              onShowBettingMachine={onShowBettingMachine}
+              onShowPenaltySetup={onShowPenaltySetup}
+              onShowPenaltyManagement={onShowPenaltyManagement}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <RecruitData progress={progress} />
+            <PotLink />
+            <OperationHistory progress={progress} />
+            <OperationSchedule progress={progress} pendingActions={pendingActions} />
+          </div>
+        </div>
+
+        {userSquad && (
+          <SquadChat 
+            squadId={userSquad.id}
+            isOpen={showSquadChat}
+            onToggle={() => setShowSquadChat(!showSquadChat)}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PostoDeComandoLayout;
