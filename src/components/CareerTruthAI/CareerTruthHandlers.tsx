@@ -51,9 +51,20 @@ export const useCareerTruthHandlers = () => {
     );
   };
 
+  // Create a wrapper function that handles the async nature of performDailyCheckIn
+  const handleDailyCheckInWrapper = async () => {
+    try {
+      const badges = await performDailyCheckIn();
+      return badges || [];
+    } catch (error) {
+      console.error('Error in daily check-in:', error);
+      return [];
+    }
+  };
+
   const { handleActionComplete, handleDailyCheckIn } = createActionHandlers(
     completeAction,
-    performDailyCheckIn, // Remove the async wrapper - let createActionHandlers handle it
+    handleDailyCheckInWrapper,
     setCheckInMessage
   );
 
