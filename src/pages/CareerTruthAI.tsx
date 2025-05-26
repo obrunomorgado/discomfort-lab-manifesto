@@ -11,6 +11,7 @@ import CalendarSync from "@/components/CareerTruthAI/CalendarSync";
 import MedicalHistory from "@/components/CareerTruthAI/MedicalHistory";
 import SubornModal from "@/components/CareerTruthAI/SubornModal";
 import MedicalStatusBar from "@/components/CareerTruthAI/MedicalStatusBar";
+import EmergencyConsultationButton from "@/components/CareerTruthAI/EmergencyConsultationButton";
 import { useCareerTruthHandlers } from "@/components/CareerTruthAI/CareerTruthHandlers";
 
 const CareerTruthAI = () => {
@@ -27,10 +28,12 @@ const CareerTruthAI = () => {
     isAnalyzing,
     analysis,
     checkInMessage,
+    isEmergencyMode,
     handleSubmit,
     handleActionComplete,
     handleDailyCheckIn,
     handleSuborn,
+    handleEmergencyConsultation,
     pendingActions,
     completedToday
   } = useCareerTruthHandlers();
@@ -49,6 +52,13 @@ const CareerTruthAI = () => {
           medicalProgress={medicalProgress}
           onShowMedicalHistory={() => setShowMedicalHistory(true)}
           onShowSubornModal={() => setShowSubornModal(true)}
+        />
+        
+        <EmergencyConsultationButton
+          medicalProgress={medicalProgress}
+          credits={progress.credits}
+          isInTreatment={progress.isInTreatment}
+          onEmergencyConsultation={handleEmergencyConsultation}
         />
         
         <TreatmentStatus progress={progress} />
@@ -70,7 +80,7 @@ const CareerTruthAI = () => {
             userInput={userInput}
             setUserInput={setUserInput}
             isAnalyzing={isAnalyzing}
-            isInTreatment={progress.isInTreatment}
+            isInTreatment={progress.isInTreatment && !isEmergencyMode}
             onSubmit={handleSubmit}
           />
 
@@ -89,7 +99,7 @@ const CareerTruthAI = () => {
                 <p className="mt-1">
                   "Este não é coaching motivacional. É tratamento médico para autossabotagem crônica. 
                   Falhas no tratamento resultam em agravamento do quadro. 
-                  {medicalProgress.isBlocked && ' Sistema bloqueado após 5 consultas - opções de suborno disponíveis.'}"
+                  {medicalProgress.isBlocked && ' Sistema bloqueado após 5 consultas - opções de suborno ou emergência disponíveis.'}"
                 </p>
               </div>
             </div>

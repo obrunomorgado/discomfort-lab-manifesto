@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { useCredits } from "@/hooks/useCredits";
@@ -13,6 +12,7 @@ export const useCareerTruthHandlers = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState("");
   const [checkInMessage, setCheckInMessage] = useState("");
+  const [isEmergencyMode, setIsEmergencyMode] = useState(false);
   
   const { progress, addTestResult, completeAction, performDailyCheckIn, getPendingActions, getCompletedActionsToday, spendCredits, saveProgress } = useUserProgress();
   const { getTestCost } = useCredits();
@@ -66,25 +66,51 @@ export const useCareerTruthHandlers = () => {
     return baseActions.slice(0, 3 + Math.floor(Math.random() * 3));
   };
 
-  const handleSubmit = async () => {
-    if (!userInput.trim()) return;
+  const handleEmergencyConsultation = () => {
+    const emergencyConsultationCost = 10;
     
-    if (medicalProgress.isBlocked) {
-      setCheckInMessage("❌ Consultório fechado! Você completou seus 5 testes. Use o suborno para continuar.");
+    if (progress.credits < emergencyConsultationCost) {
+      setCheckInMessage("❌ Créditos insuficientes para consulta de emergência!");
       return;
     }
     
-    const testCost = getTestCost('career-truth-ai');
+    const success = spendCredits(emergencyConsultationCost, 'career-truth-ai-emergency', 'Consulta de Emergência');
+    if (!success) {
+      setCheckInMessage("❌ Falha ao processar pagamento da consulta de emergência");
+      return;
+    }
     
-    if (progress.credits < testCost) {
+    setIsEmergencyMode(true);
+    setCheckInMessage("🚨 CONSULTA DE EMERGÊNCIA ATIVADA! Digite sua confissão profissional abaixo.");
+    
+    // Resetar o bloqueio temporariamente para permitir o teste
+    const newProgress = { ...progress };
+    newProgress.medicalProgress.isBlocked = false;
+    saveProgress(newProgress);
+  };
+
+  const handleSubmit = async () => {
+    if (!userInput.trim()) return;
+    
+    // Se não está em modo emergência, verificar bloqueios normais
+    if (!isEmergencyMode && medicalProgress.isBlocked) {
+      setCheckInMessage("❌ Consultório fechado! Use consulta de emergência ou suborno para continuar.");
+      return;
+    }
+    
+    const testCost = isEmergencyMode ? 0 : getTestCost('career-truth-ai'); // Emergência já foi paga
+    
+    if (!isEmergencyMode && progress.credits < testCost) {
       console.log(`Créditos insuficientes. Necessário: ${testCost}, Disponível: ${progress.credits}`);
       return;
     }
     
-    const success = spendCredits(testCost, 'career-truth-ai', 'Sem Desculpas IA');
-    if (!success) {
-      console.log('Falha ao gastar créditos');
-      return;
+    if (!isEmergencyMode) {
+      const success = spendCredits(testCost, 'career-truth-ai', 'Sem Desculpas IA');
+      if (!success) {
+        console.log('Falha ao gastar créditos');
+        return;
+      }
     }
     
     setIsAnalyzing(true);
@@ -99,8 +125,8 @@ export const useCareerTruthHandlers = () => {
       const nextScheduledDate = shouldScheduleNextTest(testNumber);
       
       const testResult: TestResult = {
-        testId: 'career-truth-ai',
-        testName: 'Sem Desculpas IA',
+        testId: isEmergencyMode ? 'career-truth-ai-emergency' : 'career-truth-ai',
+        testName: isEmergencyMode ? 'Consulta de Emergência' : 'Sem Desculpas IA',
         completedAt: new Date(),
         keyInsights: [
           'Padrões de autossabotagem profissional identificados',
@@ -110,7 +136,7 @@ export const useCareerTruthHandlers = () => {
         honestyScore: Math.floor(Math.random() * 3) + 7,
         actionItems: dailyActions.map(action => action.description),
         pointsEarned: 300,
-        creditsSpent: testCost,
+        creditsSpent: isEmergencyMode ? 10 : testCost,
         debtPointsGenerated: debtPoints,
         dailyActionsAssigned: dailyActions,
         overallScore: diagnosis.overallScore,
@@ -121,14 +147,17 @@ export const useCareerTruthHandlers = () => {
 
       addTestResult(testResult);
 
-      const analysisText = `${diagnosis.detailedAnalysis}
+      const emergencyPrefix = isEmergencyMode ? "🚨 **CONSULTA DE EMERGÊNCIA CONCLUÍDA** 🚨\n\n" : "";
+      
+      const analysisText = `${emergencyPrefix}${diagnosis.detailedAnalysis}
 
 ---
 
-📊 <strong>DADOS MÉDICOS DA CONSULTA #${testNumber}</strong>
+📊 <strong>DADOS MÉDICOS DA CONSULTA ${isEmergencyMode ? '(EMERGÊNCIA)' : '#' + testNumber}</strong>
 
 <strong>Score Diagnóstico:</strong> ${diagnosis.overallScore}/100
 <strong>Gravidade:</strong> ${diagnosis.severity.toUpperCase()}
+${isEmergencyMode ? '<strong>Tipo:</strong> EMERGÊNCIA (+10 créditos)' : ''}
 <strong>Próxima Consulta:</strong> ${nextScheduledDate ? format(nextScheduledDate, 'dd/MM/yyyy', { locale: ptBR }) : 'BLOQUEADO APÓS 5 CONSULTAS'}
 
 ---
@@ -166,6 +195,7 @@ ${testNumber < 5 ? `⚕️ <strong>"Retorno agendado para ${format(nextScheduled
 
       setAnalysis(analysisText);
       setIsAnalyzing(false);
+      setIsEmergencyMode(false); // Reset emergency mode
     }, 4000);
   };
 
@@ -195,10 +225,12 @@ ${testNumber < 5 ? `⚕️ <strong>"Retorno agendado para ${format(nextScheduled
     isAnalyzing,
     analysis,
     checkInMessage,
+    isEmergencyMode,
     handleSubmit,
     handleActionComplete,
     handleDailyCheckIn,
     handleSuborn,
+    handleEmergencyConsultation,
     pendingActions: getPendingActions(),
     completedToday: getCompletedActionsToday()
   };
