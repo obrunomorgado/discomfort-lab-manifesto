@@ -57,7 +57,7 @@ const convertToDomainLog = (dbLog: DatabasePenaltyLog): PenaltyLog => ({
 });
 
 // Export the functions expected by usePenaltyContract
-export const createPenaltyContract = async (contractData: Omit<PenaltyContract, 'id' | 'created_at' | 'consecutive_failures' | 'user_id'>): Promise<PenaltyContract> => {
+export const createPenaltyContract = async (contractData: Omit<PenaltyContract, 'id' | 'created_at' | 'consecutive_failures'>): Promise<PenaltyContract> => {
   const dbContract = await PenaltyContractsService.insert({
     ...contractData,
     last_check_date: contractData.last_check_date?.toISOString(),
@@ -69,7 +69,9 @@ export const createPenaltyContract = async (contractData: Omit<PenaltyContract, 
 export const updatePenaltyContract = async (id: string, updates: Partial<PenaltyContract>): Promise<PenaltyContract | null> => {
   const dbUpdates: Partial<DatabasePenaltyContract> = {
     ...updates,
-    last_check_date: updates.last_check_date?.toISOString()
+    // Convert Date objects to strings for database storage
+    last_check_date: updates.last_check_date?.toISOString(),
+    created_at: updates.created_at?.toISOString()
   };
   const dbContract = await PenaltyContractsService.update(id, dbUpdates);
   return dbContract ? convertToDomainContract(dbContract) : null;
