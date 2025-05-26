@@ -13,7 +13,7 @@ export const Navigation = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Testes", path: "/testes" },
-    { name: "CareerTruthAI", path: "/career-truth-ai" },
+    { name: "Sem Desculpas IA", path: "/career-truth-ai" },
     { name: "Arquiteto da Verdade", path: "/arquiteto-da-verdade" },
     { name: "Unbreakable Mind", path: "/unbreakable-mind" },
   ];

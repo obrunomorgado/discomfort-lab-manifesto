@@ -12,9 +12,9 @@ const TestPanel = () => {
   // Define badges for each test
   const testBadges: Record<string, BadgeType> = {
     "career-truth-ai": {
-      id: 'career-warrior',
-      name: 'Guerreiro da Carreira',
-      description: 'Completou o CareerTruthAI',
+      id: 'excuse-destroyer',
+      name: 'Destruidor de Desculpas',
+      description: 'Completou o Sem Desculpas IA',
       icon: '💼',
       category: 'completion',
       rarity: 'rare',
@@ -74,8 +74,8 @@ const TestPanel = () => {
   const tests = [
     {
       id: "career-truth-ai",
-      title: "CareerTruthAI",
-      description: "Autópsia brutal da sua carreira. Descubra seus sabotadores internos e receba um plano de 30-60-90 dias sem açúcar.",
+      title: "Sem Desculpas IA",
+      description: "Extermínio brutal das suas justificativas. Descubra seus padrões de evasão e receba um protocolo de 90 dias para eliminar desculpas.",
       difficulty: "BRUTAL",
       status: "Disponível",
       link: "/career-truth-ai",
@@ -294,14 +294,14 @@ const TestPanel = () => {
             NÃO SABE POR ONDE COMEÇAR?
           </h2>
           <p className="text-warm-gray/60 font-inter mb-6">
-            Recomendamos começar pelo CareerTruthAI. É o teste mais completo e revelador.
+            Recomendamos começar pelo Sem Desculpas IA. É o teste mais revelador para identificar suas justificativas.
           </p>
           <Link to="/career-truth-ai">
             <Button 
               size="lg" 
               className="bg-warm-yellow text-dark-bg hover:bg-warm-yellow/90 font-bebas text-xl px-8 py-6 tracking-wider"
             >
-              COMEÇAR COM CAREERTRUTH AI
+              COMEÇAR COM SEM DESCULPAS IA
             </Button>
           </Link>
         </div>
