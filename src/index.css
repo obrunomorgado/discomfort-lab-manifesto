@@ -1,92 +1,53 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 10 10 10;
-    --foreground: 224 224 224;
-
-    --card: 26 26 26;
-    --card-foreground: 224 224 224;
-
-    --popover: 26 26 26;
-    --popover-foreground: 224 224 224;
-
-    --primary: 231 121 249;
-    --primary-foreground: 10 10 10;
-
-    --secondary: 42 42 42;
-    --secondary-foreground: 224 224 224;
-
-    --muted: 42 42 42;
-    --muted-foreground: 163 163 163;
-
-    --accent: 42 42 42;
-    --accent-foreground: 224 224 224;
-
-    --destructive: 220 38 38;
-    --destructive-foreground: 248 250 252;
-
-    --border: 42 42 42;
-    --input: 42 42 42;
-    --ring: 231 121 249;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 10 10 10;
-    --sidebar-foreground: 224 224 224;
-    --sidebar-primary: 231 121 249;
-    --sidebar-primary-foreground: 10 10 10;
-    --sidebar-accent: 42 42 42;
-    --sidebar-accent-foreground: 224 224 224;
-    --sidebar-border: 42 42 42;
-    --sidebar-ring: 231 121 249;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-military-bg text-warm-gray font-inter;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02' fill-rule='evenodd'%3E%3Cpath d='m0 40l40-40h-40v40zm40 0v-40h-40l40 40z'/%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bebas;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
-  .military-gradient {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  /* Card base style */
+  .card-base {
+    @apply rounded-2xl bg-military-card border-2 border-military-border shadow-2xl rivet-border;
+  }
+
+  /* Military themed components */
+  .rivet-border {
+    position: relative;
   }
   
-  .metal-brushed {
-    background: linear-gradient(45deg, #71717a 0%, #a1a1aa 25%, #71717a 50%, #a1a1aa 75%, #71717a 100%);
-    background-size: 20px 20px;
+  .rivet-border::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 1px solid rgba(126, 126, 126, 0.2);
+    border-radius: inherit;
+    pointer-events: none;
   }
-  
+
   .cyber-glow {
-    box-shadow: 0 0 20px rgba(231, 121, 249, 0.3);
+    text-shadow: 0 0 10px currentColor;
   }
-  
-  .warning-glow {
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
-  }
-  
+
   .hover-lift {
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  
+
   .hover-lift:hover {
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   }
 
   .hover-glitch:hover {
@@ -94,63 +55,18 @@
   }
 
   .scanline-overlay {
-    position: relative;
-  }
-
-  .scanline-overlay::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background-image: repeating-linear-gradient(
       0deg,
       transparent,
       transparent 2px,
-      rgba(0, 255, 65, 0.04) 2px,
-      rgba(0, 255, 65, 0.04) 4px
+      rgba(0, 255, 65, 0.02) 2px,
+      rgba(0, 255, 65, 0.02) 4px
     );
-    pointer-events: none;
-    z-index: 1;
   }
+}
 
-  .rivet-border {
-    border: 2px solid #71717a;
-    position: relative;
-  }
-
-  .rivet-border::before,
-  .rivet-border::after {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, #a1a1aa 30%, #71717a 70%);
-    border-radius: 50%;
-  }
-
-  .rivet-border::before {
-    top: -4px;
-    left: -4px;
-  }
-
-  .rivet-border::after {
-    bottom: -4px;
-    right: -4px;
-  }
-
-  .dr-nicotine-dialogue {
-    @apply font-consolas text-cyber-fuchsia bg-military-card border border-cyber-fuchsia/30 p-4 rounded-lg;
-    font-family: 'Consolas', 'Monaco', monospace;
-  }
-
-  .flash-red {
-    animation: flash-red 0.3s ease-in-out infinite alternate;
-  }
-
-  @keyframes flash-red {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.7; }
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }
