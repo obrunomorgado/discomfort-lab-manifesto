@@ -1,12 +1,21 @@
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { PenaltyContract, PenaltyLog } from '@/types/penalty';
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || '',
-  import.meta.env.VITE_SUPABASE_ANON_KEY || ''
-);
+// Mock Supabase client for now - will be replaced when Supabase is properly configured
+const mockSupabase = {
+  functions: {
+    invoke: async () => ({ data: null, error: new Error('Supabase not configured') })
+  },
+  from: () => ({
+    insert: () => ({ select: () => ({ single: async () => ({ data: null, error: new Error('Supabase not configured') }) }) }),
+    update: () => ({ eq: () => ({ select: () => ({ single: async () => ({ data: null, error: new Error('Supabase not configured') }) }) }) }),
+    select: () => ({ eq: () => ({ eq: () => ({ order: () => ({ limit: () => ({ single: async () => ({ data: null, error: new Error('Supabase not configured') }) }) }) }) }) })
+  }),
+  auth: {
+    getUser: async () => ({ data: { user: null }, error: new Error('Supabase not configured') })
+  }
+};
 
 export const usePenaltyContract = () => {
   const [activeContract, setActiveContract] = useState<PenaltyContract | null>(null);
@@ -17,34 +26,29 @@ export const usePenaltyContract = () => {
     try {
       setLoading(true);
       
-      // Primeiro, criar SetupIntent no Stripe para tokenizar método de pagamento
-      const { data: setupData, error: setupError } = await supabase.functions.invoke('create-penalty-setup', {
-        body: { 
-          amount: contractData.penalty_amount,
-          currency: contractData.currency 
-        }
-      });
-
-      if (setupError) throw setupError;
-
-      // Criar contrato no banco
-      const newContract = {
-        ...contractData,
-        stripe_setup_intent_id: setupData.setup_intent_id,
-        consecutive_failures: 0,
-        created_at: new Date().toISOString()
+      // Mock implementation for now
+      console.log('Creating penalty contract:', contractData);
+      
+      // Simulate success for UI testing
+      const mockContract: PenaltyContract = {
+        id: 'mock-' + Date.now(),
+        user_id: 'mock-user',
+        daily_task: contractData.daily_task,
+        penalty_amount: contractData.penalty_amount,
+        currency: contractData.currency,
+        destination_type: contractData.destination_type,
+        destination_details: contractData.destination_details,
+        is_active: false,
+        created_at: new Date(),
+        consecutive_failures: 0
       };
 
-      const { data, error } = await supabase
-        .from('penalty_contracts')
-        .insert([newContract])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setActiveContract(data);
-      return { success: true, data, client_secret: setupData.client_secret };
+      setActiveContract(mockContract);
+      return { 
+        success: true, 
+        data: mockContract, 
+        client_secret: 'mock_client_secret' 
+      };
     } catch (error) {
       console.error('Erro ao criar contrato:', error);
       return { success: false, error };
@@ -55,18 +59,17 @@ export const usePenaltyContract = () => {
 
   const confirmPaymentMethod = async (contractId: string, paymentMethodId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('penalty_contracts')
-        .update({ 
+      console.log('Confirming payment method:', contractId, paymentMethodId);
+      
+      if (activeContract) {
+        const updatedContract = {
+          ...activeContract,
           stripe_payment_method_id: paymentMethodId,
-          is_active: true 
-        })
-        .eq('id', contractId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      setActiveContract(data);
+          is_active: true
+        };
+        setActiveContract(updatedContract);
+      }
+      
       return { success: true };
     } catch (error) {
       console.error('Erro ao confirmar método de pagamento:', error);
@@ -76,15 +79,16 @@ export const usePenaltyContract = () => {
 
   const deactivateContract = async (contractId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('penalty_contracts')
-        .update({ is_active: false })
-        .eq('id', contractId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      setActiveContract(data);
+      console.log('Deactivating contract:', contractId);
+      
+      if (activeContract) {
+        const updatedContract = {
+          ...activeContract,
+          is_active: false
+        };
+        setActiveContract(updatedContract);
+      }
+      
       return { success: true };
     } catch (error) {
       console.error('Erro ao desativar contrato:', error);
@@ -94,20 +98,9 @@ export const usePenaltyContract = () => {
 
   const loadActiveContract = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('penalty_contracts')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      setActiveContract(data || null);
+      console.log('Loading active contract...');
+      // Mock implementation - no active contract for now
+      setActiveContract(null);
     } catch (error) {
       console.error('Erro ao carregar contrato ativo:', error);
     }
@@ -115,18 +108,9 @@ export const usePenaltyContract = () => {
 
   const loadPenaltyLogs = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('penalty_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('charged_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setPenaltyLogs(data || []);
+      console.log('Loading penalty logs...');
+      // Mock implementation - no logs for now
+      setPenaltyLogs([]);
     } catch (error) {
       console.error('Erro ao carregar logs de penalidade:', error);
     }
