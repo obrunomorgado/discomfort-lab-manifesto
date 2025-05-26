@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,10 +64,7 @@ const DailyReportModal = ({ isOpen, onClose, mission, onReport }: DailyReportMod
         }`}>
           {!missionSuccess && (
             <div 
-              className="absolute inset-0 bg-red-500/20 animate-pulse" 
-              style={{ 
-                animation: 'flash-red 0.3s ease-in-out infinite alternate, 0.2s'
-              }} 
+              className="absolute inset-0 bg-red-500/20 animate-pulse flash-red" 
             />
           )}
         </div>
@@ -237,13 +235,6 @@ const DailyReportModal = ({ isOpen, onClose, mission, onReport }: DailyReportMod
           </CardContent>
         </Card>
       </div>
-
-      <style jsx>{`
-        @keyframes flash-red {
-          0% { opacity: 0.3; }
-          100% { opacity: 0.7; }
-        }
-      `}</style>
     </>
   );
 };
