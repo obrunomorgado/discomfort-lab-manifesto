@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, DollarSign } from 'lucide-react';
+import { Zap, DollarSign, Users, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserProgress } from '@/types/user';
 import { PenaltyContract } from '@/types/penalty';

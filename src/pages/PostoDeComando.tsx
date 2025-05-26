@@ -19,6 +19,8 @@ import QuickActions from '@/components/PostoDeComando/QuickActions';
 import RecruitData from '@/components/PostoDeComando/RecruitData';
 import OperationHistory from '@/components/PostoDeComando/OperationHistory';
 import OperationSchedule from '@/components/PostoDeComando/OperationSchedule';
+import SquadManagement from '@/components/Squad/SquadManagement';
+import PotLink from '@/components/Squad/PotLink';
 
 const PostoDeComando = () => {
   const { progress, getStats, getPendingActions, saveProgress, applyMissionResult } = useUserProgress();
@@ -30,6 +32,8 @@ const PostoDeComando = () => {
   const [showDailyReport, setShowDailyReport] = useState(false);
   const [showDiscomfortCard, setShowDiscomfortCard] = useState(false);
   const [showBettingMachine, setShowBettingMachine] = useState(false);
+  const [showSquadManagement, setShowSquadManagement] = useState(false);
+  const [showPotLink, setShowPotLink] = useState(false);
   
   const stats = getStats();
   const pendingActions = getPendingActions();
@@ -157,7 +161,7 @@ const PostoDeComando = () => {
         {/* Military Command Header */}
         <CommandHeader progress={progress} pendingActionsCount={pendingActions.length} />
 
-        {/* Main Content - Add the missing wrapper div */}
+        {/* Main Content */}
         <div className="bg-military-card rounded-lg border-2 border-cyber-fuchsia/30 shadow-2xl mb-8 cyber-glow rivet-border">
           {/* Combat Resources */}
           <CombatResources progress={progress} stats={stats} />
@@ -196,6 +200,9 @@ const PostoDeComando = () => {
             {/* Intel de Missão */}
             <IntelSection progress={progress} stats={stats} />
 
+            {/* Squad Management */}
+            <SquadManagement />
+
             {/* Ordens Imediatas */}
             <QuickActions
               progress={progress}
@@ -212,6 +219,9 @@ const PostoDeComando = () => {
           <div className="space-y-6">
             {/* Dados do Recruta */}
             <RecruitData progress={progress} />
+
+            {/* Link do Pot */}
+            <PotLink />
 
             {/* Histórico de Operações */}
             <OperationHistory progress={progress} />

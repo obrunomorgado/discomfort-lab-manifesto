@@ -26,7 +26,9 @@ const INITIAL_PROGRESS: UserProgress = {
     referredUsers: []
   },
   missionsCompleted: [],
-  discomfortChallengesCompleted: []
+  discomfortChallengesCompleted: [],
+  squadNotifications: [],
+  username: 'Recruta'
 };
 
 export const useUserProgress = () => {
@@ -69,7 +71,10 @@ export const useUserProgress = () => {
           referredUsers: parsed.referralSystem?.referredUsers || []
         },
         // Migração: adicionar créditos se não existir
-        credits: parsed.credits !== undefined ? parsed.credits : 15
+        credits: parsed.credits !== undefined ? parsed.credits : 15,
+        // Migração: adicionar username se não existir
+        username: parsed.username || 'Recruta',
+        squadNotifications: parsed.squadNotifications || []
       });
       
       // Verificar penalidades após carregar dados

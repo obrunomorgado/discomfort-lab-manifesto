@@ -107,6 +107,11 @@ export interface UserProgress {
   currentBettingEffect?: BettingEffect;
   missionsCompleted: DailyMissionSelection[];
   discomfortChallengesCompleted: DiscomfortChallenge[];
+  
+  // Squad system
+  currentSquadId?: string;
+  squadNotifications: any[];
+  username: string;
 }
 
 export interface UserStats {
