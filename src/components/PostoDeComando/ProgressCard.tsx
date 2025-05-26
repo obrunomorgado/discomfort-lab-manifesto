@@ -22,7 +22,7 @@ const ProgressCard = ({ progress, stats }: ProgressCardProps) => {
         {/* XP Principal */}
         <div className="text-center">
           <div className="text-4xl font-bold text-gray-100 mb-2">
-            {progress.xp.toLocaleString()}
+            {progress.totalPoints.toLocaleString()}
           </div>
           <div className="text-sm text-gray-400">XP Total</div>
         </div>
@@ -54,13 +54,13 @@ const ProgressCard = ({ progress, stats }: ProgressCardProps) => {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-gray-400">Nível {progress.level}</span>
-            <span className="text-gray-400">{Math.floor((progress.level + 1) * 1000 - progress.xp)} XP restante</span>
+            <span className="text-gray-400">{Math.floor((progress.level + 1) * 1000 - progress.totalPoints)} XP restante</span>
           </div>
           <div className="w-full bg-military-border rounded-full h-2">
             <div 
               className="bg-cyber-cyan h-2 rounded-full transition-all duration-300"
               style={{ 
-                width: `${((progress.xp % 1000) / 1000) * 100}%` 
+                width: `${((progress.totalPoints % 1000) / 1000) * 100}%` 
               }}
             />
           </div>

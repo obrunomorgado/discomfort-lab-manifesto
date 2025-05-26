@@ -41,7 +41,7 @@ const OverviewCard = ({ progress, onShowMissionSelector, onShowDailyReport }: Ov
             
             <div className="flex items-center space-x-2 text-sm text-gray-400">
               <Clock size={16} />
-              <span>Iniciada em {new Date(currentMission.startDate).toLocaleDateString('pt-BR')}</span>
+              <span>Iniciada em {new Date(currentMission.selectedAt).toLocaleDateString('pt-BR')}</span>
             </div>
             
             <Button 
