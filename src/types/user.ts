@@ -12,7 +12,7 @@ export interface Badge {
 
 export interface CreditTransaction {
   id: string;
-  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus' | 'penalty' | 'bonus';
+  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus';
   amount: number;
   description: string;
   timestamp: Date;

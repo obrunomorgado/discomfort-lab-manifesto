@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import Index from "./pages/Index";
 import TestPanel from "./pages/TestPanel";
-import SalaDosPaciente from "./pages/SalaDosPaciente";
 import CareerTruthAI from "./pages/CareerTruthAI";
 import UnbreakableMind from "./pages/UnbreakableMind";
 import ArquitetoDaVerdade from "./pages/ArquitetoDaVerdade";
@@ -25,8 +24,7 @@ const App = () => (
         <div className="min-h-screen bg-dark-bg">
           <Navigation />
           <Routes>
-            <Route path="/" element={<SalaDosPaciente />} />
-            <Route path="/sala-do-paciente" element={<SalaDosPaciente />} />
+            <Route path="/" element={<Index />} />
             <Route path="/testes" element={<TestPanel />} />
             <Route path="/career-truth-ai" element={<CareerTruthAI />} />
             <Route path="/unbreakable-mind" element={<UnbreakableMind />} />
