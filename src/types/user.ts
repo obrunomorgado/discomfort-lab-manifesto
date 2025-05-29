@@ -4,7 +4,7 @@ export interface Badge {
   name: string;
   description: string;
   icon: string;
-  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral' | 'shame' | 'medical';
+  category: 'completion' | 'consistency' | 'intensity' | 'honesty' | 'special' | 'recovery' | 'payment' | 'referral';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   unlockedAt?: Date;
   points: number;
@@ -12,7 +12,7 @@ export interface Badge {
 
 export interface CreditTransaction {
   id: string;
-  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus' | 'penalty' | 'bonus' | 'suborn';
+  type: 'purchase' | 'spent' | 'referral_earned' | 'referral_bonus' | 'penalty' | 'bonus';
   amount: number;
   description: string;
   timestamp: Date;
@@ -53,56 +53,14 @@ export interface TestResult {
   honestyScore: number;
   actionItems: string[];
   pointsEarned: number;
-  creditsSpent: number;
+  creditsSpent: number; // Nova propriedade
   debtPointsGenerated?: number;
   dailyActionsAssigned?: DailyAction[];
-  // New medical fields
-  overallScore?: number;
-  diagnosis?: import('./medical').MedicalDiagnosis;
-  testNumber?: number;
-  nextScheduledDate?: Date;
-}
-
-// Novas interfaces para o sistema de missões
-export interface DailyMissionSelection {
-  selectedMission: any;
-  isDoubled: boolean;
-  selectedAt: Date;
-  completed?: boolean;
-  completedAt?: Date;
-  pointsEarned?: number;
-}
-
-export interface DiscomfortChallenge {
-  card: any;
-  acceptedAt: Date;
-  completed?: boolean;
-  completedAt?: Date;
-  pointsEarned?: number;
-}
-
-export interface BettingEffect {
-  envelope: any;
-  selectedAt: Date;
-  isActive: boolean;
-}
-
-// New medical progress interface
-export interface MedicalProgress {
-  currentTestNumber: number;
-  isBlocked: boolean;
-  canSuborn: boolean;
-  subornsUsed: number;
-  nextAppointment?: Date;
-  totalConsultations: number;
-  isPatientCured: boolean;
-  evolutionTrend: 'improving' | 'stable' | 'declining';
-  averageScore: number;
 }
 
 export interface UserProgress {
   totalPoints: number;
-  credits: number;
+  credits: number; // Nova propriedade
   debtPoints: number;
   level: number;
   badges: Badge[];
@@ -115,29 +73,14 @@ export interface UserProgress {
   isInTreatment: boolean;
   dailyActions: DailyAction[];
   treatmentStartDate?: Date;
-  creditTransactions: CreditTransaction[];
-  referralSystem: ReferralSystem;
-  
-  // Novas propriedades para o sistema de missões
-  currentMission?: DailyMissionSelection;
-  currentDiscomfortChallenge?: DiscomfortChallenge;
-  currentBettingEffect?: BettingEffect;
-  missionsCompleted: DailyMissionSelection[];
-  discomfortChallengesCompleted: DiscomfortChallenge[];
-  
-  // Squad system
-  currentSquadId?: string;
-  squadNotifications: any[];
-  username: string;
-  
-  // New medical system
-  medicalProgress: MedicalProgress;
+  creditTransactions: CreditTransaction[]; // Nova propriedade
+  referralSystem: ReferralSystem; // Nova propriedade
 }
 
 export interface UserStats {
   testsCompleted: number;
   totalPoints: number;
-  credits: number;
+  credits: number; // Nova propriedade
   debtPoints: number;
   badgesEarned: number;
   currentStreak: number;
@@ -145,8 +88,4 @@ export interface UserStats {
   honestyScore: number;
   isInTreatment: boolean;
   daysInTreatment?: number;
-  // Medical stats
-  medicalEvolution?: number;
-  consultationsCompleted?: number;
-  averageDiagnosisScore?: number;
 }

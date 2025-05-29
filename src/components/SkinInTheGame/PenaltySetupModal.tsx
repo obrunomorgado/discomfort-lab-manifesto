@@ -64,7 +64,6 @@ const PenaltySetupModal = ({ isOpen, onClose }: PenaltySetupModalProps) => {
     }
 
     const result = await createContract({
-      user_id: 'current-user', // Add the missing user_id
       daily_task: task,
       penalty_amount: amount * 100, // converter para centavos
       currency: 'BRL',
