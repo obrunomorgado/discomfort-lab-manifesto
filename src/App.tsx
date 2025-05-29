@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,27 +16,29 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen bg-dark-bg">
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/testes" element={<TestPanel />} />
-            <Route path="/career-truth-ai" element={<CareerTruthAI />} />
-            <Route path="/unbreakable-mind" element={<UnbreakableMind />} />
-            <Route path="/arquiteto-da-verdade" element={<ArquitetoDaVerdade />} />
-            <Route path="/perfil" element={<UserProfile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen bg-dark-bg">
+            <Navigation />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/testes" element={<TestPanel />} />
+              <Route path="/career-truth-ai" element={<CareerTruthAI />} />
+              <Route path="/unbreakable-mind" element={<UnbreakableMind />} />
+              <Route path="/arquiteto-da-verdade" element={<ArquitetoDaVerdade />} />
+              <Route path="/perfil" element={<UserProfile />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
